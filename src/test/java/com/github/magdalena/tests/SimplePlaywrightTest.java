@@ -1,5 +1,11 @@
 package com.github.magdalena.tests;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +19,8 @@ import com.github.magdalena.pom.HomePage;
 import com.github.magdalena.pom.NavigationPage;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.AriaRole;
@@ -36,7 +44,7 @@ public class SimplePlaywrightTest {
     @BeforeAll
     static void setUpAll() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch();
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
     }
 
     @BeforeEach
@@ -53,64 +61,108 @@ public class SimplePlaywrightTest {
     @Test
     void loop() {
         for (int i = 0; i < 100; i++) {
+            setUpAll();
+            setUp();
+            Instant now = Instant.now();
             colourTesterShouldBeVisibleInCart();
-            System.out.println("Test " + i + " passed");
+            Instant then = Instant.now();
+            System.out.println("Test " + i + " passed : " + Duration.between(now, then).toMillis() + " ms");
+            tearDown();
+            tearDownAll();
+            for (int ii = 1; ii <= 14; ii++) {
+                Path path = Paths.get(i + ".png");
+                try {
+                    Files.deleteIfExists(path);
+
+                } catch (Exception e) {
+                    System.err.println("Failed to delete: " + path + " due to " + e.getMessage());
+                }
+            }
         }
     }
 
     @Test
     void colourTesterShouldBeVisibleInCart() {
         // Sprawdzic czy koszyk jest pusty
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("1.png"))
+                .setFullPage(true));
         cartPage.openCartPage();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("2.png"))
+                .setFullPage(true));
         homePage.rejectAllCookies();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("3.png"))
+                .setFullPage(true));
 
         cartPage.checkBasketIsEmpty();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("4.png"))
+                .setFullPage(true));
         homePage.openHomePage();
 
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("5.png"))
+                .setFullPage(true));
         navigationPage.dropdownFindColour();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("6.png"))
+                .setFullPage(true));
         navigationPage.openFindColour();
 
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("7.png"))
+                .setFullPage(true));
         colorSelectionPage.chooseColour();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("8.png"))
+                .setFullPage(true));
         colorSelectionPage.chooseSpecificTypeColorAndBuyTester();
 
         // AlertPage
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("9.png"))
+                .setFullPage(true));
         alertComponent.closeAlert();
 
         // NavigationPage
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("10.png"))
+                .setFullPage(true));
         navigationPage.openShoppingCart();
 
         // Assert
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("11.png"))
+                .setFullPage(true));
         assertThat(cartPage.getQuantity()).hasValue("1");
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("12.png"))
+                .setFullPage(true));
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("13.png"))
+                .setFullPage(true));
         assertThat(cartPage.findText("Gentle Lavender")).isVisible();
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("14.png"))
+                .setFullPage(true));
     }
 
     @Test
-    void addVioletColorProductToTheCart() {
-        page.navigate("https://www.dulux.co.uk/");
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Reject All")).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Find a colour")).click();
-        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Find a colour")).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Violet")).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Gentle Lavender")).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Buy a Tester in this colour")).click();
-        page.getByRole(AriaRole.ALERT).getByRole(AriaRole.BUTTON).click();
+    void searchColorAndTryOurVisualizerApp() {
+        homePage.openHomePage();
+        homePage.rejectAllCookies();
 
+        navigationPage.searchClickonPage();
+        navigationPage.inputColorOnSearchBoxAndEnter();
 
-        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Shopping Cart")).click();
-        page.getByText("Shopping Basket").isVisible();
-        page.getByText("Gentle Lavender").isVisible();
-        page.getByText("Dulux Colour Tester").isVisible();
-        page.getByText("Quantity").isVisible();
-        page.getByRole(AriaRole.LISTITEM, new Page.GetByRoleOptions().setName("1")).isVisible();
-        //String quantity = page.locator("#order_line_item_attribute_0_quantity").evaluate("element => element.value");
-        //Assertions.assertThat(quantity).isEqualTo("1");
+        Page newPage = context.waitForPage(() -> {
+            colorSelectionPage.openVisualizerApp();
+        });
+        Assertions.assertThat(newPage.url()).isEqualTo("https://www.dulux.co.uk/en/articles/dulux-visualizer-app");
 
-
-        //page.locator("#order_line_item_attribute_0_quantity").isVisible();
-        //String quantity = (String) page.evaluate
-        //("document.querySelector('#order_line_item_attribute_0_quantity').value");
-        //Assertions.assertThat(quantity).isEqualTo("1");
     }
 
     @AfterEach

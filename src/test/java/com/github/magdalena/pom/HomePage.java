@@ -17,6 +17,7 @@ public class HomePage {
     }
 
     public void rejectAllCookies() {
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Reject All")).isVisible();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Reject All")).click();
     }
 }

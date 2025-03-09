@@ -22,4 +22,12 @@ public class NavigationPage {
     public void openShoppingCart() {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Shopping Cart")).click();
     }
+
+    public void searchClickonPage(){
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search")).click();
+    }
+    public void inputColorOnSearchBoxAndEnter(){
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("search-field")).fill("Gentle Lavender");
+        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("search-field")).press("Enter");
+    }
 }
