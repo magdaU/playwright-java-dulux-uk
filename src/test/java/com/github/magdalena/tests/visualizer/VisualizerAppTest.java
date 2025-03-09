@@ -61,7 +61,7 @@ public class VisualizerAppTest {
 
         // THEN
         page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("/Screenshots/VisualizerAppTest/LastScreenShoot.png")));
+                .setPath(Paths.get("Screenshots/VisualizerAppTest/LastScreenShoot.png")));
         Assertions.assertThat(newPage.url()).isEqualTo("https://www.dulux.co.uk/en/articles/dulux-visualizer-app");
     }
 

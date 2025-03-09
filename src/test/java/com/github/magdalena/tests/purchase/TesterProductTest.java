@@ -73,7 +73,7 @@ public class TesterProductTest {
 
         // THEN
         page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("/Screenshots/TesterProductTest/LastScreenShoot.png")));
+                .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShoot.png")));
 
         assertThat(cartPage.getQuantity()).hasValue("1");
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
