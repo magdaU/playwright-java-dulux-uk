@@ -3,6 +3,8 @@ package com.github.magdalena.page.pom;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 public class CartPage {
 
     private static final String CART_PAGE_URL = "https://www.dulux.co.uk/en/store/cart";
@@ -20,15 +22,15 @@ public class CartPage {
     }
 
     public Locator getQuantity() {
-        page.getByLabel(QUANTITY_LABEL).isVisible();
+        assertThat(page.getByLabel(QUANTITY_LABEL)).isVisible();
         return page.getByLabel(QUANTITY_LABEL);
     }
 
     public Locator findText(String colourName) {
-        return page.locator("text=" + colourName);
+        return page.getByText(colourName);
     }
 
     public void checkBasketIsEmpty() {
-        page.locator(YOUR_BASKET_IS_EMPTY_TEXT).isVisible();
+        assertThat(page.getByText(YOUR_BASKET_IS_EMPTY_TEXT)).isVisible();
     }
 }

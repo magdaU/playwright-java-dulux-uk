@@ -28,7 +28,7 @@ public class NavigationComponent {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(SHOPPING_CART)).click();
     }
 
-    public void searchClickonPage(){
+    public void searchClickOnPage(){
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(SEARCH_BUTTON)).click();
     }
 

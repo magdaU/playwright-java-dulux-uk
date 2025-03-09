@@ -3,23 +3,26 @@ package com.github.magdalena.page.pom;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 public class HomePage {
 
+    private static final String DUlUX_PAGE = "https://www.dulux.co.uk";
+    private static final String REJECT_ALL = "Reject All";
+
     private final Page page;
-    private static final String DUlUX_PAGE = "https://www.dulux.co.uk/en/store/cart";
 
     public HomePage(Page page) {
         this.page = page;
     }
 
-    // PAGE_URL wyniesie do zmienne
     public void openHomePage() {
-        page.navigate("https://www.dulux.co.uk");
+        page.navigate(DUlUX_PAGE);
         page.waitForLoadState();
     }
 
     public void rejectAllCookies() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Reject All")).isVisible();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Reject All")).click();
+        assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(REJECT_ALL))).isVisible();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(REJECT_ALL)).click();
     }
 }

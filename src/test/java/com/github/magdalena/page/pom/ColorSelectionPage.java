@@ -18,21 +18,17 @@ public class ColorSelectionPage {
     }
 
     public void chooseColour(String colour) {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(colour)).isVisible();
+        assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(colour))).isVisible();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(colour)).click();
     }
 
     public void choseSpecificTypeColor(String colour) {
         assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(colour))).isVisible();
-        // ponizsze nie potrzebne
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(colour)).isVisible();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(colour)).click();
     }
 
     public void buyATesterColour() {
         assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(BUY_A_TESTER_TEXT))).isVisible();
-        // ponizsze nie potrzeba
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(BUY_A_TESTER_TEXT)).isVisible();
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(BUY_A_TESTER_TEXT)).click();
     }
 

@@ -51,25 +51,17 @@ public class VisualizerAppTest {
 
         // WHEN
         homePage.openHomePage();
-        page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("s1.png")));
         homePage.rejectAllCookies();
-        page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("s2.png")));
-        navigationPage.searchClickonPage();
-        page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("s3.png")));
+        navigationPage.searchClickOnPage();
         navigationPage.inputColorOnSearchBoxAndEnter(colourType);
 
         Page newPage = context.waitForPage(() -> {
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get("s4.png")));
             colorSelectionPage.openVisualizerApp();
         });
-        page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("s5.png")));
 
         // THEN
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("/Screenshots/VisualizerAppTest/LastScreenShoot.png")));
         Assertions.assertThat(newPage.url()).isEqualTo("https://www.dulux.co.uk/en/articles/dulux-visualizer-app");
     }
 
