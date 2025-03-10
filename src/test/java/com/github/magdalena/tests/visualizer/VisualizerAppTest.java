@@ -81,17 +81,16 @@ public class VisualizerAppTest {
     }
 
     private void setUpMobile() {
-        context = browser.newContext(new Browser.NewContextOptions()
-                .setViewportSize(375, 667));
-        page = context.newPage();
-        navigationPage = new NavigationComponent(page);
-        colorSelectionPage = new ColorSelectionPage(page);
-        homePage = new HomePage(page);
+        createSetup(375, 667);
     }
 
     private void setUpDesktop() {
+        createSetup(1920, 1080);
+    }
+
+    private void createSetup(int width, int height) {
         context = browser.newContext(new Browser.NewContextOptions()
-                .setViewportSize(1920, 1080));
+                .setViewportSize(width, height));
         page = context.newPage();
         navigationPage = new NavigationComponent(page);
         colorSelectionPage = new ColorSelectionPage(page);

@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.AriaRole;
 public class NavigationComponent {
 
     private static final String FIND_A_COLOUR_MENU_ITEM = "Find a colour";
+    private static final String MENU_HAMBURGER = "Menu";
     private static final String SHOPPING_CART = "Shopping Cart";
     private static final String SEARCH_FIELD = "search-field";
     private static final String SEARCH_BUTTON = "Search";
@@ -16,11 +17,15 @@ public class NavigationComponent {
         this.page = page;
     }
 
-    public void dropdownFindColour() {
+    public void clickDropdownFindColour() {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM)).click();
     }
 
-    public void openFindColour() {
+    public void clickDropdownHamburgerMenu() {
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(MENU_HAMBURGER)).click();
+    }
+
+    public void clickFindColour() {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM)).click();
     }
 

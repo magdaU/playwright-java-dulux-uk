@@ -1,11 +1,9 @@
 package com.github.magdalena.tests.purchase;
 
 import java.nio.file.Paths;
-import java.util.Arrays;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.github.magdalena.page.component.AlertComponent;
@@ -18,6 +16,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -42,23 +41,10 @@ public class TesterProductTest {
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
     }
 
-    @BeforeEach
-    void setUp() {
-        context = browser.newContext(new Browser.NewContextOptions()
-                .setLocale("pl-PL")
-                .setGeolocation(52.2296756, 21.0122287)
-               .setPermissions(Arrays.asList("geolocation")));
-        page = context.newPage();
-        navigationPage = new NavigationComponent(page);
-        colorSelectionPage = new ColorSelectionPage(page);
-        cartPage = new CartPage(page);
-        homePage = new HomePage(page);
-        alertComponent = new AlertComponent(page);
-    }
-
     @Test
-    void shouldAddTesterToCart() {
+    void whenDesktop_thenShouldAddTesterToCart() {
         // GIVEN
+        setUpDesktop();
         String colour = "Violet";
         String colourType = "Gentle Lavender";
 
@@ -68,8 +54,8 @@ public class TesterProductTest {
 
         // WHEN
         homePage.openHomePage();
-        navigationPage.dropdownFindColour();
-        navigationPage.openFindColour();
+        navigationPage.clickDropdownFindColour();
+        navigationPage.clickFindColour();
         colorSelectionPage.chooseColour(colour);
         colorSelectionPage.choseSpecificTypeColor(colourType);
         colorSelectionPage.buyATesterColour();
@@ -79,12 +65,64 @@ public class TesterProductTest {
         // THEN
         page.waitForLoadState(LoadState.NETWORKIDLE);
         page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShoot.png")));
+                .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShootDesktop.png")));
 
         assertThat(cartPage.getQuantity()).hasValue("1");
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
         assertThat(cartPage.findText(colourType)).isVisible();
 
+    }
+
+    @Test
+    void whenMobile_thenShouldAddTesterToCart() {
+        // GIVEN
+        setUpMobile();
+        String colour = "Violet";
+        String colourType = "Gentle Lavender";
+
+        cartPage.openCartPage();
+        homePage.rejectAllCookies();
+        cartPage.checkBasketIsEmpty();
+
+        // WHEN
+        homePage.openHomePage();
+        navigationPage.clickDropdownHamburgerMenu();
+        navigationPage.clickDropdownFindColour();
+        navigationPage.clickFindColour();
+        colorSelectionPage.chooseColour(colour);
+        colorSelectionPage.choseSpecificTypeColor(colourType);
+        colorSelectionPage.buyATesterColour();
+        alertComponent.closeAlert();
+        navigationPage.openShoppingCart();
+
+        // THEN
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShootMobile.png")));
+
+        assertThat(cartPage.getQuantity()).hasValue("1");
+        assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
+        assertThat(cartPage.findText(colourType)).isVisible();
+
+    }
+
+    private void setUpMobile() {
+        createSetup(375, 667);
+    }
+
+    private void setUpDesktop() {
+        createSetup(1920, 1080);
+    }
+
+    private void createSetup(int width, int height) {
+        context = browser.newContext(new Browser.NewContextOptions()
+                .setViewportSize(width, height));
+        page = context.newPage();
+        navigationPage = new NavigationComponent(page);
+        colorSelectionPage = new ColorSelectionPage(page);
+        cartPage = new CartPage(page);
+        homePage = new HomePage(page);
+        alertComponent = new AlertComponent(page);
     }
 
     @AfterEach
