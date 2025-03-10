@@ -16,6 +16,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.LoadState;
 
 public class VisualizerAppTest {
 
@@ -60,6 +61,7 @@ public class VisualizerAppTest {
         });
 
         // THEN
+        page.waitForLoadState(LoadState.NETWORKIDLE);
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("Screenshots/VisualizerAppTest/LastScreenShoot.png")));
         Assertions.assertThat(newPage.url()).isEqualTo("https://www.dulux.co.uk/en/articles/dulux-visualizer-app");

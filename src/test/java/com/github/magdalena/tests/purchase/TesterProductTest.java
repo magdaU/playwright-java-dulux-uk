@@ -1,6 +1,7 @@
 package com.github.magdalena.tests.purchase;
 
 import java.nio.file.Paths;
+import java.util.Arrays;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,6 +18,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.LoadState;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -42,7 +44,13 @@ public class TesterProductTest {
 
     @BeforeEach
     void setUp() {
-        context = browser.newContext();
+        context = browser.newContext(new Browser.NewContextOptions()
+
+                .setLocale("pl-PL") // Set the locale to English (United Kingdom)
+
+                .setGeolocation(52.2296756, 21.0122287) // Set the geolocation to London, UK
+
+               .setPermissions(Arrays.asList("geolocation"))); // Grant geolocation permissions
         page = context.newPage();
         navigationPage = new NavigationComponent(page);
         colorSelectionPage = new ColorSelectionPage(page);
@@ -72,6 +80,7 @@ public class TesterProductTest {
         navigationPage.openShoppingCart();
 
         // THEN
+        page.waitForLoadState(LoadState.NETWORKIDLE);
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShoot.png")));
 

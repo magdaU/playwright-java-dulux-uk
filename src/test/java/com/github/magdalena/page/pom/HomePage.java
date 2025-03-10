@@ -8,7 +8,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class HomePage {
 
     private static final String DUlUX_PAGE = "https://www.dulux.co.uk";
-    private static final String REJECT_ALL = "Reject All";
+    private static final String REJECT_ALL = "#onetrust-reject-all-handler";
 
     private final Page page;
 
@@ -22,7 +22,7 @@ public class HomePage {
     }
 
     public void rejectAllCookies() {
-        assertThat(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(REJECT_ALL))).isVisible();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(REJECT_ALL)).click();
+        assertThat(page.locator(REJECT_ALL)).isVisible();
+        page.locator(REJECT_ALL).click();
     }
 }
