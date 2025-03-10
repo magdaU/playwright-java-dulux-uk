@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.github.magdalena.page.pom.ColorSelectionPage;
@@ -17,6 +16,8 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.LoadState;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class VisualizerAppTest {
 
@@ -36,18 +37,10 @@ public class VisualizerAppTest {
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
     }
 
-    @BeforeEach
-    void setUp() {
-        context = browser.newContext();
-        page = context.newPage();
-        navigationPage = new NavigationComponent(page);
-        colorSelectionPage = new ColorSelectionPage(page);
-        homePage = new HomePage(page);
-    }
-
     @Test
-    void searchColorAndTryOurVisualizerApp() {
+    void whenDesktop_thenOpenVisualizerAppNewTab() {
         // GIVEN
+        setUpDesktop();
         String colourType = "Gentle Lavender";
 
         // WHEN
@@ -65,6 +58,44 @@ public class VisualizerAppTest {
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("Screenshots/VisualizerAppTest/LastScreenShoot.png")));
         Assertions.assertThat(newPage.url()).isEqualTo("https://www.dulux.co.uk/en/articles/dulux-visualizer-app");
+    }
+
+    @Test
+    void whenMobile_thenShowContactSupport() {
+        // GIVEN
+        setUpMobile();
+        String colourType = "Gentle Lavender";
+
+        // WHEN
+        homePage.openHomePage();
+        homePage.rejectAllCookies();
+        navigationPage.searchClickOnPage();
+        navigationPage.inputColorOnSearchBoxAndEnter(colourType);
+        colorSelectionPage.openVisualizerApp();
+
+        // THEN
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+        page.screenshot(new Page.ScreenshotOptions()
+                .setPath(Paths.get("Screenshots/VisualizerAppTest/LastScreenShoot.png")));
+        assertThat(page.locator("pre")).containsText("Inconsistent store data, contact support@adjust.com");
+    }
+
+    private void setUpMobile() {
+        context = browser.newContext(new Browser.NewContextOptions()
+                .setViewportSize(375, 667));
+        page = context.newPage();
+        navigationPage = new NavigationComponent(page);
+        colorSelectionPage = new ColorSelectionPage(page);
+        homePage = new HomePage(page);
+    }
+
+    private void setUpDesktop() {
+        context = browser.newContext(new Browser.NewContextOptions()
+                .setViewportSize(1920, 1080));
+        page = context.newPage();
+        navigationPage = new NavigationComponent(page);
+        colorSelectionPage = new ColorSelectionPage(page);
+        homePage = new HomePage(page);
     }
 
     @AfterEach

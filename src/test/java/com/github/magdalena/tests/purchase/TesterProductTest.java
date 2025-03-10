@@ -45,12 +45,9 @@ public class TesterProductTest {
     @BeforeEach
     void setUp() {
         context = browser.newContext(new Browser.NewContextOptions()
-
-                .setLocale("pl-PL") // Set the locale to English (United Kingdom)
-
-                .setGeolocation(52.2296756, 21.0122287) // Set the geolocation to London, UK
-
-               .setPermissions(Arrays.asList("geolocation"))); // Grant geolocation permissions
+                .setLocale("pl-PL")
+                .setGeolocation(52.2296756, 21.0122287)
+               .setPermissions(Arrays.asList("geolocation")));
         page = context.newPage();
         navigationPage = new NavigationComponent(page);
         colorSelectionPage = new ColorSelectionPage(page);
