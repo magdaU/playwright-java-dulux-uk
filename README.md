@@ -22,10 +22,6 @@ JUnit (junit-jupiter) → runs the tests
 AssertJ (assertj-core) → provides readable assertions
 Playwright → performs browser-based E2E actions
 
-Additional Info:
-https://playwright.dev/
-
-
 👉 In short:
 Maven doesn’t include these tools by default — you must declare them so your project can compile and run tests properly.
 *Take some dependencies to pom file
@@ -35,3 +31,14 @@ Maven doesn’t include these tools by default — you must declare them so your
 no JUnit → tests won’t run
 no AssertJ → tests become less readable and harder to maintain
 no Playwright → no UI/E2E tests at all
+
+
+👉Future Improvements
+
+TO DO:
+-avoid repeating the code, methods like tearDown, setupMobile/Desktop, createSetup are repeated in both test classes and contain the same logic
+- as for page object classes - it is good practice for them not to contain assertions, there is a test for that, or a higher layer
+- It would also be nice to use the Page Object Pattern and inheritance by extending Page classes
+no AssertJ → test
+
+
