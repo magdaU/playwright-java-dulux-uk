@@ -11,15 +11,27 @@ Maven
 AssertJ
 🏗 Project Structure
 
-The framework is organized using the Page Object Model (POM) with additional support for reusable components.
-
-🚀 Purpose
-
-This framework is used for:
-
-End-to-end UI testing
-Regression testing
+This framework is used for:  End-to-end UI testing, Regression testing
 Cross-browser validation
 Automating critical user flows
 
-The focus is on stability, readability, and maintainability.
+
+👉 Dependencies are needed because each one has a specific role:
+
+JUnit (junit-jupiter) → runs the tests
+AssertJ (assertj-core) → provides readable assertions
+Playwright → performs browser-based E2E actions
+
+Additional Info:
+https://playwright.dev/
+
+
+👉 In short:
+Maven doesn’t include these tools by default — you must declare them so your project can compile and run tests properly.
+*Take some dependencies to pom file
+
+👉 Without them:
+
+no JUnit → tests won’t run
+no AssertJ → tests become less readable and harder to maintain
+no Playwright → no UI/E2E tests at all
