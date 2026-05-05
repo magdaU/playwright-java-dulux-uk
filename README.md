@@ -40,27 +40,64 @@ src/
 
 ---
 
-## ✅ Test Scenarios
-
-### `TesterProductTest`
-Tests that a user can add a **Dulux Colour Tester** product to the shopping cart.
-
-| Test | Viewport |
-|---|---|
-| `whenDesktop_thenShouldAddTesterToCart` | 1920 × 1080 |
-| `whenMobile_thenShouldAddTesterToCart` | 375 × 667 |
-
-**Flow:** Open cart → reject cookies → browse to colour (*Violet / Gentle Lavender*) → buy tester → verify quantity & product name in cart.
+## ✅ Test Cases
 
 ---
 
-### `VisualizerAppTest`
-Tests the **Dulux Visualizer App** link behaviour across devices.
+### TC-01 · Add colour tester to cart – 🖥️ Desktop
 
-| Test | Viewport | Expected result |
-|---|---|---|
-| `whenDesktop_thenOpenVisualizerAppNewTab` | 1920 × 1080 | Opens Visualizer page in a new tab |
-| `whenMobile_thenShowContactSupport` | 375 × 667 | Shows "contact support" error message |
+1. Open the cart page
+2. Reject cookies
+3. Verify the basket is empty
+4. Go to the home page
+5. Open "Find a colour" from the top navigation
+6. Select colour group **Violet**
+7. Select shade **Gentle Lavender**
+8. Click "Buy a Tester in this colour"
+9. Close the confirmation alert
+10. Open the shopping cart
+
+✅ Cart contains **1x Dulux Colour Tester – Gentle Lavender**
+
+---
+
+### TC-02 · Add colour tester to cart – 📱 Mobile
+
+1. Open the cart page
+2. Reject cookies
+3. Verify the basket is empty
+4. Go to the home page
+5. Open the **hamburger menu**
+6. Open "Find a colour" from the mobile navigation
+7. Select colour group **Violet**
+8. Select shade **Gentle Lavender**
+9. Click "Buy a Tester in this colour"
+10. Close the confirmation alert
+11. Open the shopping cart
+
+✅ Cart contains **1x Dulux Colour Tester – Gentle Lavender**
+
+---
+
+### TC-03 · Visualizer App link – 🖥️ Desktop
+
+1. Go to the home page
+2. Reject cookies
+3. Search for **Gentle Lavender**
+4. Click "Try our Visualizer App"
+
+✅ Visualizer App opens in a **new tab**
+
+---
+
+### TC-04 · Visualizer App link – 📱 Mobile
+
+1. Go to the home page
+2. Reject cookies
+3. Search for **Gentle Lavender**
+4. Click "Try our Visualizer App"
+
+✅ Error message is displayed – app is **not supported** on mobile
 
 ---
 
