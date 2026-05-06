@@ -1,6 +1,7 @@
 package com.github.magdalena.tests.purchase;
 
 import java.nio.file.Paths;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.magdalena.page.component.AlertComponent;
@@ -49,7 +50,7 @@ public class TesterProductTest extends BaseTest {
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShootDesktop.png")));
 
-        assertThat(cartPage.getQuantity()).hasValue("1");
+        Assertions.assertThat(cartPage.getQuantity().inputValue()).isEqualTo("1");
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
         assertThat(cartPage.findText(colourType)).isVisible();
     }
@@ -81,7 +82,7 @@ public class TesterProductTest extends BaseTest {
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("Screenshots/TesterProductTest/LastScreenShootMobile.png")));
 
-        assertThat(cartPage.getQuantity()).hasValue("1");
+        Assertions.assertThat(cartPage.getQuantity().inputValue()).isEqualTo("1");
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
         assertThat(cartPage.findText(colourType)).isVisible();
     }

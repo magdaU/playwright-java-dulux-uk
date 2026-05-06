@@ -52,6 +52,7 @@ public class VisualizerAppTest extends BaseTest {
         page.waitForLoadState(LoadState.NETWORKIDLE);
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("Screenshots/VisualizerAppTest/LastScreenShoot.png")));
-        assertThat(page.locator("pre")).containsText("Inconsistent store data, contact support@adjust.com");
+        Assertions.assertThat(page.locator("pre").textContent())
+                .contains("Inconsistent store data, contact support@adjust.com");
     }
 }
