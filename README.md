@@ -1,6 +1,7 @@
 # 🎭 Playwright E2E Test Framework – Dulux (Java)
 
 [![E2E Tests](https://github.com/magdaU/playwright-e2e-test-dulux/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/magdaU/playwright-e2e-test-dulux/actions/workflows/e2e-tests.yml)
+[![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxNEg5VjhIMTF2OHptNCAwaC0yVjhoMnY4eiIvPjwvc3ZnPg==)](https://magdau.github.io/playwright-e2e-test-dulux/)
 
 A UI end-to-end test automation framework built with **Java 21**, **Playwright**, **JUnit 5**, **Cucumber BDD**, and **Maven**, targeting the [Dulux UK](https://www.dulux.co.uk) website.
 
@@ -223,21 +224,32 @@ Feature: Purchase a colour tester
 
 Allure is integrated via `allure-cucumber7-jvm`. Results are written to `target/allure-results/`.
 
+### 🌐 Live report (GitHub Pages)
+
+After every push to `main` the report is automatically published and available at:
+
+**➡️ https://magdau.github.io/playwright-e2e-test-dulux/**
+
+> **One-time setup required** — enable GitHub Pages in the repository:
+> 1. Go to **Settings** → **Pages**
+> 2. Source: **Deploy from a branch**
+> 3. Branch: **`gh-pages`** / `/ (root)`
+> 4. Click **Save**
+>
+> The `gh-pages` branch is created automatically after the first successful CI run.
+
 ### Generate and open the report locally
 
 ```bash
-# install Allure CLI (once)
-# macOS / Linux:
-brew install allure
-# Windows (scoop):
-scoop install allure
-
-# run tests then generate report
+# run tests
 mvn test
-allure serve target/allure-results
-```
 
-The report opens automatically in the browser at `http://localhost:<port>`.
+# generate HTML report (output: target/site/allure-maven-plugin/)
+mvn allure:report
+
+# OR serve it live in the browser
+mvn allure:serve
+```
 
 ### What's recorded
 - ✅ Passed / ❌ Failed / ⏭ Skipped scenarios
@@ -310,6 +322,9 @@ on:
         description: "Cucumber tag expression to run"
         default: "@smoke"
 
+permissions:
+  contents: write   # required to push to gh-pages branch
+
 jobs:
   cucumber-smoke:
     runs-on: ubuntu-latest
@@ -321,8 +336,13 @@ jobs:
         with: { java-version: '21', distribution: temurin, cache: maven }
       - run: mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
       - run: mvn -Dheadless=true -Dtest=CucumberRunner "-Dcucumber.filter.tags=${CUCUMBER_TAGS}" test
-      - uses: actions/upload-artifact@v4   # uploads cucumber-reports
-      - uses: actions/upload-artifact@v4   # uploads allure-results
+      - run: mvn allure:report                          # generates HTML report
+      - uses: actions/upload-artifact@v4                # uploads cucumber-reports
+      - uses: actions/upload-artifact@v4                # uploads allure-results
+      - uses: peaceiris/actions-gh-pages@v3             # publishes report to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        with:
+          publish_dir: target/site/allure-maven-plugin
 ```
 
 ---
@@ -348,5 +368,5 @@ jobs:
 - ✅ ~~no AssertJ → tests become less readable and harder to maintain~~ → AssertJ now used for all value/string assertions
 - ✅ ~~add Cucumber BDD layer~~ → Cucumber 7 with PicoContainer DI, clean Gherkin, shared `CucumberContext`
 - ✅ ~~add @smoke / @regression tags~~ → all scenarios tagged, runnable by expression
-- ✅ ~~add Allure reporting~~ → `allure-cucumber7-jvm` integrated, screenshot on failure
+- ✅ ~~add Allure reporting~~ → `allure-cucumber7-jvm` integrated, screenshot on failure, report published to GitHub Pages
 - ✅ ~~set up GitHub Actions CI~~ → workflow runs smoke suite on every push/PR, artifacts uploaded
