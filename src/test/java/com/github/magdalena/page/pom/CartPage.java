@@ -4,8 +4,6 @@ import com.github.magdalena.page.BasePage;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-
 public class CartPage extends BasePage {
 
     private static final String CART_PAGE_URL = "https://www.dulux.co.uk/en/store/cart";
@@ -21,15 +19,14 @@ public class CartPage extends BasePage {
     }
 
     public Locator getQuantity() {
-        assertThat(page.getByLabel(QUANTITY_LABEL)).isVisible();
         return page.getByLabel(QUANTITY_LABEL);
     }
 
-    public Locator findText(String colourName) {
-        return page.getByText(colourName);
+    public Locator findText(String text) {
+        return page.getByText(text);
     }
 
-    public void checkBasketIsEmpty() {
-        assertThat(page.getByText(YOUR_BASKET_IS_EMPTY_TEXT)).isVisible();
+    public Locator getBasketEmptyText() {
+        return page.getByText(YOUR_BASKET_IS_EMPTY_TEXT);
     }
 }

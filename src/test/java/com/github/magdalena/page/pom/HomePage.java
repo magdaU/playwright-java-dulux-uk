@@ -4,8 +4,6 @@ import com.github.magdalena.page.BasePage;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-
 public class HomePage extends BasePage {
 
     private static final String DUlUX_PAGE = "https://www.dulux.co.uk";
@@ -21,7 +19,6 @@ public class HomePage extends BasePage {
     }
 
     public void rejectAllCookies() {
-        assertThat(page.locator(REJECT_ALL)).isVisible();
         page.locator(REJECT_ALL).click();
     }
 }

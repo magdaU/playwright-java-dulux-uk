@@ -153,5 +153,5 @@ Screenshots/
 
 - ✅ ~~avoid repeating the code – methods like `tearDown`, `setupMobile/Desktop`, `createSetup` are repeated in both test classes and contain the same logic~~ → extracted to `BaseTest`
 - ✅ ~~it would also be nice to use the **Page Object Pattern and inheritance** by extending Page classes~~ → extracted to `BasePage`
-- as for page object classes – it is good practice for them **not to contain assertions**; there is a test layer for that, or a higher layer
+- ✅ ~~as for page object classes – it is good practice for them **not to contain assertions**; there is a test layer for that, or a higher layer~~ → all assertions moved to test classes
 - no AssertJ → tests become less readable and harder to maintain

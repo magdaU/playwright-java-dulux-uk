@@ -32,7 +32,7 @@ public class TesterProductTest extends BaseTest {
 
         cartPage.openCartPage();
         homePage.rejectAllCookies();
-        cartPage.checkBasketIsEmpty();
+        assertThat(cartPage.getBasketEmptyText()).isVisible();
 
         // WHEN
         homePage.openHomePage();
@@ -63,7 +63,7 @@ public class TesterProductTest extends BaseTest {
 
         cartPage.openCartPage();
         homePage.rejectAllCookies();
-        cartPage.checkBasketIsEmpty();
+        assertThat(cartPage.getBasketEmptyText()).isVisible();
 
         // WHEN
         homePage.openHomePage();
