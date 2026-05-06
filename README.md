@@ -12,6 +12,7 @@ A UI end-to-end test automation framework built with **Java 21**, **Playwright**
 | Playwright | 1.50.0 | Browser automation |
 | JUnit Jupiter | 5.11.1 | Test runner |
 | AssertJ | 3.24.2 | Fluent assertions |
+| Cucumber | 7.18.0 | BDD – Gherkin scenarios |
 | Maven | 3.x | Build & dependency management |
 
 ---
@@ -21,21 +22,33 @@ A UI end-to-end test automation framework built with **Java 21**, **Playwright**
 ```
 src/
 └── test/
-    └── java/
-        └── com/github/magdalena/
-            ├── page/
-            │   ├── component/
-            │   │   ├── AlertComponent.java       # Handles alert/banner interactions
-            │   │   └── NavigationComponent.java  # Top nav, hamburger menu, search
-            │   └── pom/
-            │       ├── CartPage.java             # Shopping cart page actions
-            │       ├── ColorSelectionPage.java   # Colour picker & tester purchase
-            │       └── HomePage.java             # Home page navigation & cookies
-            └── tests/
-                ├── purchase/
-                │   └── TesterProductTest.java    # Add colour tester to cart (desktop & mobile)
-                └── visualizer/
-                    └── VisualizerAppTest.java    # Visualizer app new-tab flow (desktop & mobile)
+    ├── java/
+    │   └── com/github/magdalena/
+    │       ├── page/
+    │       │   ├── BasePage.java                 # Base class for all page objects (POM + inheritance)
+    │       │   ├── component/
+    │       │   │   ├── AlertComponent.java       # Handles alert/banner interactions
+    │       │   │   └── NavigationComponent.java  # Top nav, hamburger menu, search
+    │       │   └── pom/
+    │       │       ├── CartPage.java             # Shopping cart page actions
+    │       │       ├── ColorSelectionPage.java   # Colour picker & tester purchase
+    │       │       └── HomePage.java             # Home page navigation & cookies
+    │       ├── cucumber/
+    │       │   ├── CucumberContext.java          # Shared browser/page state for Cucumber
+    │       │   ├── CucumberRunner.java           # Cucumber suite runner
+    │       │   └── steps/
+    │       │       ├── AddTesterToCartSteps.java # Step definitions – cart feature
+    │       │       └── VisualizerAppSteps.java   # Step definitions – visualizer feature
+    │       └── tests/
+    │           ├── BaseTest.java                 # Shared setup/teardown for JUnit tests
+    │           ├── purchase/
+    │           │   └── TesterProductTest.java    # Add colour tester to cart (desktop & mobile)
+    │           └── visualizer/
+    │               └── VisualizerAppTest.java    # Visualizer app new-tab flow (desktop & mobile)
+    └── resources/
+        └── features/
+            ├── add_tester_to_cart.feature        # BDD scenario – add tester to cart
+            └── visualizer_app.feature            # BDD scenario – visualizer app link
 ```
 
 ---
@@ -118,6 +131,19 @@ mvn test
 mvn test -Dtest=TesterProductTest
 mvn test -Dtest=VisualizerAppTest
 ```
+
+### Run Cucumber BDD scenarios
+```bash
+mvn test -Dtest=CucumberRunner
+```
+
+### Run only desktop or mobile scenarios (by tag)
+```bash
+mvn test -Dtest=CucumberRunner -Dcucumber.filter.tags="@desktop"
+mvn test -Dtest=CucumberRunner -Dcucumber.filter.tags="@mobile"
+```
+
+> **Cucumber HTML report** is generated after each run at `target/cucumber-reports/report.html`
 
 > **Note:** Tests run in **headed** mode by default (`setHeadless(false)`).  
 > Screenshots are saved to `Screenshots/<TestClassName>/` after each run.
