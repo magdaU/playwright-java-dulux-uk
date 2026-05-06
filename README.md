@@ -336,13 +336,14 @@ jobs:
         with: { java-version: '21', distribution: temurin, cache: maven }
       - run: mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
       - run: mvn -Dheadless=true -Dtest=CucumberRunner "-Dcucumber.filter.tags=${CUCUMBER_TAGS}" test
-      - run: mvn allure:report                          # generates HTML report
+      - run: npm install -g allure-commandline          # installs Allure CLI
+      - run: allure generate target/allure-results --clean -o target/allure-report
       - uses: actions/upload-artifact@v4                # uploads cucumber-reports
       - uses: actions/upload-artifact@v4                # uploads allure-results
       - uses: peaceiris/actions-gh-pages@v3             # publishes report to GitHub Pages
         if: github.ref == 'refs/heads/main'
         with:
-          publish_dir: target/site/allure-maven-plugin
+          publish_dir: target/allure-report
 ```
 
 ---

@@ -42,9 +42,13 @@ jobs:
       - name: Run Cucumber tests
         run: mvn -B -Dheadless=true -Dtest=CucumberRunner "-Dcucumber.filter.tags=${CUCUMBER_TAGS}" test
 
+      - name: Install Allure CLI
+        if: always()
+        run: npm install -g allure-commandline --save-dev
+
       - name: Generate Allure HTML report
         if: always()
-        run: mvn -B allure:report
+        run: allure generate target/allure-results --clean -o target/allure-report
 
       - name: Upload Cucumber reports
         if: always()
@@ -67,6 +71,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target/site/allure-maven-plugin
+          publish_dir: target/allure-report
           publish_branch: gh-pages
           commit_message: "ci: publish Allure report [skip ci]"
