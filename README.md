@@ -1,5 +1,7 @@
 # 🎭 Playwright E2E Test Framework – Dulux (Java)
 
+[![E2E Tests](https://github.com/magdaU/playwright-e2e-test-dulux/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/magdaU/playwright-e2e-test-dulux/actions/workflows/e2e-tests.yml)
+
 A UI end-to-end test automation framework built with **Java 21**, **Playwright**, **JUnit 5**, **Cucumber BDD**, and **Maven**, targeting the [Dulux UK](https://www.dulux.co.uk) website.
 
 ---
