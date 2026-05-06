@@ -15,10 +15,20 @@ public class VisualizerAppSteps {
         this.ctx = ctx;
     }
 
+    @Then("the Visualizer opens in a new tab")
+    public void theVisualizerOpensInANewTab() {
+        Assertions.assertThat(ctx.isDesktop()).isTrue();
+        Assertions.assertThat(ctx.visualizerTab()).isNotNull();
     }
 
+    @And("the Visualizer page URL is {string}")
+    public void theVisualizerPageUrlIs(String expectedUrl) {
+        Assertions.assertThat(ctx.visualizerTab().url()).isEqualTo(expectedUrl);
     }
 
+    @Then("the page shows message {string}")
+    public void thePageShowsMessage(String errorMessage) {
+        assertThat(ctx.page().locator("pre")).isVisible();
+        Assertions.assertThat(ctx.page().locator("pre").textContent()).contains(errorMessage);
     }
 }
-
