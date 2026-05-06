@@ -1,9 +1,10 @@
 package com.github.magdalena.page.component;
 
+import com.github.magdalena.page.BasePage;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
-public class NavigationComponent {
+public class NavigationComponent extends BasePage {
 
     private static final String FIND_A_COLOUR_MENU_ITEM = "Find a colour";
     private static final String MENU_HAMBURGER = "Menu";
@@ -11,10 +12,8 @@ public class NavigationComponent {
     private static final String SEARCH_FIELD = "search-field";
     private static final String SEARCH_BUTTON = "Search";
 
-    private final Page page;
-
     public NavigationComponent(Page page) {
-        this.page = page;
+        super(page);
     }
 
     public void clickDropdownFindColour() {

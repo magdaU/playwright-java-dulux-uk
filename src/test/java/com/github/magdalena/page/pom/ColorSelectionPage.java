@@ -1,20 +1,19 @@
 package com.github.magdalena.page.pom;
 
+import com.github.magdalena.page.BasePage;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-public class ColorSelectionPage {
+public class ColorSelectionPage extends BasePage {
 
     private static final String BUY_A_TESTER_TEXT = "Buy a Tester in this colour";
     private static final String VISUALIZER_APP_TEXT = "Try our Visualizer App";
 
-    private final Page page;
-
     public ColorSelectionPage(Page page) {
-        this.page = page;
+        super(page);
     }
 
     public void chooseColour(String colour) {

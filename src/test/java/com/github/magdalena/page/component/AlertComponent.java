@@ -1,14 +1,13 @@
 package com.github.magdalena.page.component;
 
+import com.github.magdalena.page.BasePage;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
-public class AlertComponent {
-
-    private final Page page;
+public class AlertComponent extends BasePage {
 
     public AlertComponent(Page page) {
-        this.page = page;
+        super(page);
     }
 
     public void closeAlert() {
