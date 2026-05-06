@@ -1,0 +1,57 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      cucumber_tags:
+        description: "Cucumber tag expression to run"
+        required: false
+        default: "@smoke"
+
+jobs:
+  cucumber-smoke:
+    name: Cucumber smoke suite
+    runs-on: ubuntu-latest
+    env:
+      HEADLESS: "true"
+      CUCUMBER_TAGS: ${{ github.event.inputs.cucumber_tags || '@smoke' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Install Playwright browser
+        run: mvn -B -q exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+
+      - name: Run Cucumber tests
+        run: mvn -B -Dheadless=true -Dtest=CucumberRunner "-Dcucumber.filter.tags=${CUCUMBER_TAGS}" test
+
+      - name: Upload Cucumber reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-reports
+          path: |
+            target/cucumber-reports
+            target/surefire-reports
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: target/allure-results
+
