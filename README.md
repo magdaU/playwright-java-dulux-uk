@@ -1,6 +1,6 @@
 # 🎭 Playwright E2E Test Framework – Dulux (Java)
 
-A UI end-to-end test automation framework built with **Java 21**, **Playwright**, **JUnit 5**, and **Maven**, targeting the [Dulux UK](https://www.dulux.co.uk) website.
+A UI end-to-end test automation framework built with **Java 21**, **Playwright**, **JUnit 5**, **Cucumber BDD**, and **Maven**, targeting the [Dulux UK](https://www.dulux.co.uk) website.
 
 ---
 
@@ -11,8 +11,12 @@ A UI end-to-end test automation framework built with **Java 21**, **Playwright**
 | Java | 21 | Language |
 | Playwright | 1.50.0 | Browser automation |
 | JUnit Jupiter | 5.11.1 | Test runner |
+| Cucumber | 7.18.1 | BDD layer (Gherkin feature files) |
+| PicoContainer | – | Dependency injection for Cucumber |
 | AssertJ | 3.24.2 | Fluent assertions |
+| Allure | 2.29.1 | Test reporting |
 | Maven | 3.x | Build & dependency management |
+| GitHub Actions | – | CI/CD pipeline |
 
 ---
 
@@ -21,21 +25,36 @@ A UI end-to-end test automation framework built with **Java 21**, **Playwright**
 ```
 src/
 └── test/
-    └── java/
-        └── com/github/magdalena/
-            ├── page/
-            │   ├── component/
-            │   │   ├── AlertComponent.java       # Handles alert/banner interactions
-            │   │   └── NavigationComponent.java  # Top nav, hamburger menu, search
-            │   └── pom/
-            │       ├── CartPage.java             # Shopping cart page actions
-            │       ├── ColorSelectionPage.java   # Colour picker & tester purchase
-            │       └── HomePage.java             # Home page navigation & cookies
-            └── tests/
-                ├── purchase/
-                │   └── TesterProductTest.java    # Add colour tester to cart (desktop & mobile)
-                └── visualizer/
-                    └── VisualizerAppTest.java    # Visualizer app new-tab flow (desktop & mobile)
+    ├── java/
+    │   └── com/github/magdalena/
+    │       ├── cucumber/
+    │       │   ├── steps/
+    │       │   │   ├── CommonSteps.java           # Reusable Given/When steps (shared across features)
+    │       │   │   ├── AddTesterToCartSteps.java  # Then steps for tester purchase
+    │       │   │   └── VisualizerAppSteps.java    # Then steps for visualizer experience
+    │       │   ├── CucumberContext.java           # Shared browser state + high-level business methods
+    │       │   ├── CucumberHooks.java             # @Before / @After – screenshot on failure
+    │       │   └── CucumberRunner.java            # JUnit Platform suite runner with Allure plugin
+    │       ├── page/
+    │       │   ├── component/
+    │       │   │   ├── AlertComponent.java        # Handles alert/banner interactions
+    │       │   │   └── NavigationComponent.java   # Top nav, hamburger menu, search
+    │       │   └── pom/
+    │       │       ├── CartPage.java              # Shopping cart page actions
+    │       │       ├── ColorSelectionPage.java    # Colour picker & tester purchase
+    │       │       └── HomePage.java              # Home page navigation & cookies
+    │       ├── support/
+    │       │   └── PlaywrightConfig.java          # Reads headless flag from system property / env var
+    │       └── tests/
+    │           ├── BaseTest.java                  # Shared JUnit setup / teardown
+    │           ├── purchase/
+    │           │   └── TesterProductTest.java     # Add colour tester to cart (desktop & mobile)
+    │           └── visualizer/
+    │               └── VisualizerAppTest.java     # Visualizer app new-tab flow (desktop & mobile)
+    └── resources/
+        └── features/
+            ├── tester_purchase.feature            # BDD scenarios for TC-01 / TC-02
+            └── visualizer_experience.feature      # BDD scenarios for TC-03 / TC-04
 ```
 
 ---
@@ -108,25 +127,126 @@ src/
 - Maven 3.x
 - Internet access (tests run against `dulux.co.uk`)
 
-### Run all tests
+### Run all tests (JUnit + Cucumber)
 ```bash
 mvn test
 ```
 
-### Run a single test class
+### Run only Cucumber scenarios
+```bash
+mvn test -Dtest=CucumberRunner
+```
+
+### Run by tag
+```bash
+# only smoke suite
+mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@smoke"
+
+# full regression
+mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@regression"
+
+# desktop scenarios only
+mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@desktop"
+```
+
+### Run a single JUnit test class
 ```bash
 mvn test -Dtest=TesterProductTest
 mvn test -Dtest=VisualizerAppTest
 ```
 
-> **Note:** Tests run in **headed** mode by default (`setHeadless(false)`).  
-> Screenshots are saved to `Screenshots/<TestClassName>/` after each run.
+### Run headless (for CI)
+```bash
+mvn test -Dheadless=true
+```
+
+> **Note:** By default tests run in **headed** mode (`headless=false`).  
+> Pass `-Dheadless=true` or set the `HEADLESS=true` environment variable to run without a browser window.
+
+---
+
+## 🥒 Cucumber BDD Layer
+
+Tests are written in Gherkin and live in `src/test/resources/features/`.
+
+### Feature files
+
+| File | Tag | Scenarios |
+|---|---|---|
+| `tester_purchase.feature` | `@purchase @regression` | Desktop & Mobile add-to-cart |
+| `visualizer_experience.feature` | `@visualizer @regression` | Desktop opens new tab / Mobile error |
+
+### Tags
+
+| Tag | Meaning |
+|---|---|
+| `@smoke` | Fast critical path – runs on every push |
+| `@regression` | Full regression suite |
+| `@desktop` | Scenarios using 1920×1080 viewport |
+| `@mobile` | Scenarios using 375×667 viewport |
+| `@purchase` | Tester purchase feature |
+| `@visualizer` | Visualizer experience feature |
+
+### Architecture
+
+```
+CucumberContext          ← shared browser state (Page, BrowserContext) + business helper methods
+      │
+CucumberHooks            ← @Before initialises context, @After tears down + attaches screenshot on failure
+      │
+Step definitions         ← inject CucumberContext via PicoContainer DI
+  ├── CommonSteps        ← Given / When steps (reused by both features)
+  ├── AddTesterToCartSteps  ← Then assertions for purchase scenarios
+  └── VisualizerAppSteps    ← Then assertions for visualizer scenarios
+```
+
+### Example feature file
+
+```gherkin
+@purchase @regression
+Feature: Purchase a colour tester
+
+  @smoke @desktop
+  Scenario: Desktop customer adds a tester from the colour finder
+    Given a desktop customer starts with an empty basket
+    When the customer browses to shade "Gentle Lavender" from colour family "Violet"
+    And the customer adds a tester to the basket
+    Then the basket contains 1 item
+    And the basket includes tester "Dulux Colour Tester" for shade "Gentle Lavender"
+```
+
+---
+
+## 📊 Allure Report
+
+Allure is integrated via `allure-cucumber7-jvm`. Results are written to `target/allure-results/`.
+
+### Generate and open the report locally
+
+```bash
+# install Allure CLI (once)
+# macOS / Linux:
+brew install allure
+# Windows (scoop):
+scoop install allure
+
+# run tests then generate report
+mvn test
+allure serve target/allure-results
+```
+
+The report opens automatically in the browser at `http://localhost:<port>`.
+
+### What's recorded
+- ✅ Passed / ❌ Failed / ⏭ Skipped scenarios
+- Scenario steps with duration
+- Screenshot attached to every **failed** scenario (visible in the Allure timeline)
 
 ---
 
 ## 📁 Screenshots
 
-Automatically captured at the end of each test:
+Automatically captured at the end of each JUnit test:
 
 ```
 Screenshots/
@@ -137,12 +257,81 @@ Screenshots/
     └── LastScreenShoot.png
 ```
 
+For **Cucumber scenarios**, a screenshot is attached to the report automatically on failure (visible in Cucumber HTML report and Allure).
+
+---
+
+## ⚙️ GitHub Actions CI
+
+The workflow is defined in `.github/workflows/e2e-tests.yml`.
+
+### When it runs
+
+| Trigger | Default tag |
+|---|---|
+| Push to `main` or `feature/**` | `@smoke` |
+| Pull Request to `main` | `@smoke` |
+| Manual (`workflow_dispatch`) | configurable (see below) |
+
+### How to trigger manually with a custom tag
+
+1. Go to your repository on GitHub
+2. Click **Actions** → **E2E Tests**
+3. Click **Run workflow**
+4. Enter a tag expression in the `cucumber_tags` field, e.g.:
+   - `@smoke` – only smoke tests
+   - `@regression` – full regression
+   - `@desktop` – desktop scenarios only
+   - `@smoke and @desktop` – smoke AND desktop
+5. Click **Run workflow**
+
+### Artifacts uploaded after each run
+
+| Artifact | Contents |
+|---|---|
+| `cucumber-reports` | HTML report, JSON, XML, surefire reports |
+| `allure-results` | Raw Allure data (open with `allure serve`) |
+
+To download: **Actions** → select a run → **Artifacts** section at the bottom.
+
+### Workflow configuration overview
+
+```yaml
+on:
+  push:
+    branches: [main, feature/**]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      cucumber_tags:
+        description: "Cucumber tag expression to run"
+        default: "@smoke"
+
+jobs:
+  cucumber-smoke:
+    runs-on: ubuntu-latest
+    env:
+      HEADLESS: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '21', distribution: temurin, cache: maven }
+      - run: mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+      - run: mvn -Dheadless=true -Dtest=CucumberRunner "-Dcucumber.filter.tags=${CUCUMBER_TAGS}" test
+      - uses: actions/upload-artifact@v4   # uploads cucumber-reports
+      - uses: actions/upload-artifact@v4   # uploads allure-results
+```
+
 ---
 
 ## 🧩 Design Patterns Used
 
-- **Page Object Model (POM)** – each page/component is encapsulated in its own class
+- **Page Object Model (POM)** – each page/component is encapsulated in its own class extending `BasePage`
 - **Component Objects** – reusable UI components (`NavigationComponent`, `AlertComponent`) are separated from full-page objects
+- **Base classes** – `BasePage` (shared `Page` field) and `BaseTest` (shared JUnit setup/teardown) eliminate code duplication
+- **Behaviour-Driven Development (BDD)** – Cucumber Gherkin scenarios describe behaviour in plain business language
+- **Dependency Injection** – PicoContainer injects `CucumberContext` into all step definition classes
 - **Given / When / Then** – each test follows the GWT arrangement for readability
 
 ---
@@ -155,3 +344,7 @@ Screenshots/
 - ✅ ~~it would also be nice to use the **Page Object Pattern and inheritance** by extending Page classes~~ → extracted to `BasePage`
 - ✅ ~~as for page object classes – it is good practice for them **not to contain assertions**; there is a test layer for that, or a higher layer~~ → all assertions moved to test classes
 - ✅ ~~no AssertJ → tests become less readable and harder to maintain~~ → AssertJ now used for all value/string assertions
+- ✅ ~~add Cucumber BDD layer~~ → Cucumber 7 with PicoContainer DI, clean Gherkin, shared `CucumberContext`
+- ✅ ~~add @smoke / @regression tags~~ → all scenarios tagged, runnable by expression
+- ✅ ~~add Allure reporting~~ → `allure-cucumber7-jvm` integrated, screenshot on failure
+- ✅ ~~set up GitHub Actions CI~~ → workflow runs smoke suite on every push/PR, artifacts uploaded
