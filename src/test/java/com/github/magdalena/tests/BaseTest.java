@@ -3,6 +3,7 @@ package com.github.magdalena.tests;
 import com.github.magdalena.page.pom.ColorSelectionPage;
 import com.github.magdalena.page.pom.HomePage;
 import com.github.magdalena.page.component.NavigationComponent;
+import com.github.magdalena.support.PlaywrightConfig;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -26,7 +27,7 @@ public abstract class BaseTest {
     @BeforeAll
     static void setUpAll() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(PlaywrightConfig.isHeadless()));
     }
 
     protected void setUpDesktop() {

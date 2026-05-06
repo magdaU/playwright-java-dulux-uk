@@ -17,9 +17,7 @@ public class CucumberHooks {
     }
 
     @After
-    public void afterScenario() {
         ctx.tearDown();
     }
 }
-
 
