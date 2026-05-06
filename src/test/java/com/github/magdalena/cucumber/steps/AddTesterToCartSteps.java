@@ -1,8 +1,6 @@
 package com.github.magdalena.cucumber.steps;
 
 import com.github.magdalena.cucumber.CucumberContext;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -19,21 +17,9 @@ public class AddTesterToCartSteps {
         this.ctx = ctx;
     }
 
-    @Before
-    public void beforeScenario() {
-        ctx.initBrowser();
-    }
-
-    @After
-    public void afterScenario() {
-        ctx.tearDown();
-    }
-
-    // ── Background ────────────────────────────────────────────────────────────
-
     @Given("the cart page is open")
     public void theCartPageIsOpen() {
-        ctx.initContext(1920, 1080);   // default; overridden by desktop/mobile When step
+        ctx.initContext(1920, 1080);
         ctx.cartPage.openCartPage();
     }
 
@@ -47,11 +33,10 @@ public class AddTesterToCartSteps {
         assertThat(ctx.cartPage.getBasketEmptyText()).isVisible();
     }
 
-    // ── Desktop scenario ──────────────────────────────────────────────────────
-
     @When("the customer navigates to the home page on desktop")
     public void navigateToHomePageDesktop() {
         ctx.initContext(1920, 1080);
+        ctx.setDesktop(true);
         ctx.cartPage.openCartPage();
         ctx.homePage.rejectAllCookies();
         assertThat(ctx.cartPage.getBasketEmptyText()).isVisible();
@@ -68,11 +53,10 @@ public class AddTesterToCartSteps {
         ctx.navigationPage.clickDropdownFindColour();
     }
 
-    // ── Mobile scenario ───────────────────────────────────────────────────────
-
     @When("the customer navigates to the home page on mobile")
     public void navigateToHomePageMobile() {
         ctx.initContext(375, 667);
+        ctx.setDesktop(false);
         ctx.cartPage.openCartPage();
         ctx.homePage.rejectAllCookies();
         assertThat(ctx.cartPage.getBasketEmptyText()).isVisible();
@@ -83,8 +67,6 @@ public class AddTesterToCartSteps {
     public void opensHamburgerMenu() {
         ctx.navigationPage.clickDropdownHamburgerMenu();
     }
-
-    // ── Shared steps ──────────────────────────────────────────────────────────
 
     @And("selects colour group {string}")
     public void selectsColourGroup(String colour) {
@@ -112,8 +94,6 @@ public class AddTesterToCartSteps {
         ctx.navigationPage.openShoppingCart();
     }
 
-    // ── Assertions ────────────────────────────────────────────────────────────
-
     @Then("the cart contains {int} item")
     public void theCartContainsItem(int quantity) {
         Assertions.assertThat(ctx.cartPage.getQuantity().inputValue())
@@ -130,4 +110,3 @@ public class AddTesterToCartSteps {
         assertThat(ctx.cartPage.findText(shade)).isVisible();
     }
 }
-

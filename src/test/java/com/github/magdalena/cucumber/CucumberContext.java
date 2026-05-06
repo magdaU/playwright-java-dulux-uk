@@ -24,6 +24,7 @@ public class CucumberContext {
     public CartPage cartPage;
     public AlertComponent alertComponent;
     public Page newTab;
+    private boolean desktop;
 
     public void initBrowser() {
         playwright = Playwright.create();
@@ -31,6 +32,10 @@ public class CucumberContext {
     }
 
     public void initContext(int width, int height) {
+        if (context != null) {
+            context.close();
+        }
+
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(width, height));
         page = context.newPage();
         homePage = new HomePage(page);
@@ -46,6 +51,14 @@ public class CucumberContext {
 
     public Page getPage() {
         return page;
+    }
+
+    public boolean isDesktop() {
+        return desktop;
+    }
+
+    public void setDesktop(boolean desktop) {
+        this.desktop = desktop;
     }
 
     public void tearDown() {
