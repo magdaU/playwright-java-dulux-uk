@@ -12,6 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cucumber.version>7.18.1</cucumber.version>
         <allure.version>2.29.1</allure.version>
+        <aspectj.version>1.9.22</aspectj.version>
     </properties>
     <dependencies>
         <!-- Playwright -->
@@ -60,6 +61,12 @@
             <version>${allure.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- JUnit Platform Suite -->
         <dependency>
             <groupId>org.junit.platform</groupId>
@@ -72,6 +79,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.16</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- AspectJ (required for Allure JUnit5 agent) -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -90,6 +104,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Runner.java</include>
