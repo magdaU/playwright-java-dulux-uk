@@ -1,7 +1,6 @@
 package com.github.magdalena.page.component;
 
 import com.github.magdalena.page.BasePage;
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
@@ -19,6 +18,10 @@ public class NavigationComponent extends BasePage {
 
     public void clickDropdownFindColour() {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM)).click();
+        // The button triggers a page navigation (not a dropdown). Wait for the new
+        // page to load before proceeding — without this, the next click resolves
+        // against the outgoing page and hits a stale element.
+        page.waitForLoadState();
     }
 
     public void clickDropdownHamburgerMenu() {
@@ -26,12 +29,7 @@ public class NavigationComponent extends BasePage {
     }
 
     public void clickFindColour() {
-        // Filter to the visible link only — the page also contains a hidden "Find a colour"
-        // tab-link inside colour-detail sections (e.g. /en/colour-details/h_White#tabId=item0)
-        // which Playwright would otherwise resolve first and fail to click.
-        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM))
-                .filter(new Locator.FilterOptions().setVisible(true))
-                .click();
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM)).click();
     }
 
     public void openShoppingCart() {
