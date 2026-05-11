@@ -283,9 +283,11 @@ The workflow is defined in `.github/workflows/e2e-tests.yml`.
 
 | Trigger | Default tag |
 |---|---|
-| Push to `main` or `feature/**` | `@smoke` |
+| Push to `main`, `feature/**` or `fix/**` | `@smoke` |
 | Pull Request to `main` | `@smoke` |
 | Manual (`workflow_dispatch`) | configurable (see below) |
+
+> **Why `fix/**`?** Without this pattern, branches named `fix/something` are silently skipped by CI — pushes land with no feedback until a PR is opened. Adding `fix/**` alongside `feature/**` ensures the smoke suite runs on every active branch regardless of its naming prefix.
 
 ### How to trigger manually with a custom tag
 
@@ -313,7 +315,7 @@ To download: **Actions** → select a run → **Artifacts** section at the botto
 ```yaml
 on:
   push:
-    branches: [main, feature/**]
+    branches: [main, feature/**, fix/**]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -371,3 +373,4 @@ jobs:
 - ✅ ~~add @smoke / @regression tags~~ → all scenarios tagged, runnable by expression
 - ✅ ~~add Allure reporting~~ → `allure-cucumber7-jvm` integrated, screenshot on failure, report published to GitHub Pages
 - ✅ ~~set up GitHub Actions CI~~ → workflow runs smoke suite on every push/PR, artifacts uploaded
+- ✅ ~~CI only triggers on `feature/**` branches~~ → added `fix/**` pattern so branches like `fix/something` also run the smoke suite automatically
