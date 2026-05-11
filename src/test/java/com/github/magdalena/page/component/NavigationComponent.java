@@ -18,6 +18,10 @@ public class NavigationComponent extends BasePage {
 
     public void clickDropdownFindColour() {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM)).click();
+        // The button triggers a page navigation (not a dropdown). Wait for the new
+        // page to load before proceeding — without this, the next click resolves
+        // against the outgoing page and hits a stale element.
+        page.waitForLoadState();
     }
 
     public void clickDropdownHamburgerMenu() {
