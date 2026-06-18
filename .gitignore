@@ -40,3 +40,8 @@ build/
 
 *.png
 /screenshots
+
+### Documentation assets (must be committed so they render in the README) ###
+!docs/
+!docs/**
+!docs/**/*.png
