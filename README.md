@@ -46,7 +46,6 @@ The project is built the way a commercial QA framework is built: a clean **Page 
 - ✅ **Assertions in the test layer only** — page objects never assert; AssertJ fluent assertions live in tests/steps.
 - 📊 **Allure + Cucumber HTML reporting** — screenshot auto-attached to every failed scenario.
 - 🚀 **CI/CD with GitHub Actions** — smoke suite on every push/PR, artifacts uploaded, live report deployed to GitHub Pages.
-- 🤖 **AI-assisted development workflow** — see [AI Features](#-ai-features).
 
 ---
 
@@ -319,18 +318,6 @@ The pipeline is defined in [`.github/workflows/e2e-tests.yml`](.github/workflows
 
 ---
 
-## 🤖 AI Features
-
-This framework was built and is maintained with an **AI-assisted development workflow** — the kind of toolchain expected on a modern QA team:
-
-- **Test scaffolding & POM generation** — AI assistance to draft page objects, step definitions and Gherkin scenarios from the structure of the target site, then hand-reviewed and refactored.
-- **Flaky-locator debugging** — using AI to reason about non-deterministic navigation/locator failures and to propose stable `waitForLoadState()` / locator strategies (see the `fix/flaky-navigation-locators` history).
-- **Self-documenting commits & PR review** — AI-assisted commit messages and pull-request reviews to keep the history readable and the diffs easy to follow.
-
-> All AI-generated code is reviewed, tested and owned by the author — AI is used as an accelerator, not an autopilot.
-
----
-
 ## 👉 Future Improvements
 
 **Done:**
@@ -345,12 +332,6 @@ This framework was built and is maintained with an **AI-assisted development wor
 - ✅ Set up **GitHub Actions** CI (smoke on every push/PR, artifacts uploaded)
 - ✅ Extend CI triggers to `fix/**` branches
 
-**Planned:**
-
-- 🔜 Cross-browser runs (Firefox / WebKit) via a Playwright project matrix
-- 🔜 Parallel execution to cut suite time
-- 🔜 Environment config (dev/stage/prod) instead of a hard-coded base URL
-- 🔜 Visual regression checks
 
 ---
 
@@ -361,5 +342,3 @@ This framework was built and is maintained with an **AI-assisted development wor
 [![GitHub](https://img.shields.io/badge/GitHub-magdaU-181717?logo=github&logoColor=white)](https://github.com/magdaU)
 
 QA Automation Engineer — Java · Playwright · Cucumber BDD · CI/CD.
-
-> Built as a portfolio project to demonstrate a commercial-grade UI automation framework end to end: clean architecture, BDD, reporting and CI/CD.
