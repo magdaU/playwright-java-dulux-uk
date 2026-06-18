@@ -1,0 +1,19 @@
+# Run the E2E suite in a container with one command:
+#   docker compose up --build
+#
+# Override the tag expression without editing this file:
+#   CUCUMBER_TAGS="@regression" docker compose up --build
+services:
+  e2e-tests:
+    build: .
+    image: dulux-e2e-tests:latest
+    environment:
+      HEADLESS: "true"
+      # Defaults to the smoke suite; override via the CUCUMBER_TAGS env var.
+      CUCUMBER_TAGS: "${CUCUMBER_TAGS:-@smoke}"
+    # Chromium can crash with the default 64 MB /dev/shm inside containers.
+    shm_size: "1gb"
+    # Surface the reports on the host after the run.
+    volumes:
+      - ./target/allure-results:/app/target/allure-results
+      - ./target/cucumber-reports:/app/target/cucumber-reports

@@ -125,7 +125,6 @@ src/
     │       │   ├── CucumberHooks.java             # @Before / @After – screenshot on failure
     │       │   └── CucumberRunner.java            # JUnit Platform suite runner with Allure plugin
     │       ├── page/
-    │       │   ├── BasePage.java                  # Shared Page field for all page/component objects
     │       │   ├── component/
     │       │   │   ├── AlertComponent.java        # Handles alert/banner interactions
     │       │   │   └── NavigationComponent.java   # Top nav, hamburger menu, search
@@ -187,6 +186,61 @@ mvn test
 ```
 
 That's it — `mvn test` runs the JUnit tests and the full Cucumber suite.
+
+---
+
+## 🐳 Run in Docker
+
+Run the full suite in a reproducible container — no local Java, Maven, or browser install required. Just clone and run.
+
+The image mirrors the CI pipeline: **Java 21**, **Chromium installed with its OS dependencies**, tests executed **headless** as a non-root user.
+
+### Files
+
+| File | Purpose |
+|---|---|
+| `Dockerfile` | Builds the test runner image (`maven:3.9-eclipse-temurin-21` base) |
+| `.dockerignore` | Keeps `target/`, `.git/`, IDE files, etc. out of the build context |
+| `docker-compose.yml` | One-command run with sensible defaults + report volumes |
+
+### Quick start (Docker Compose)
+
+```bash
+# Build the image and run the @smoke suite
+docker compose up --build
+
+# Run a different tag expression
+CUCUMBER_TAGS="@regression" docker compose up --build
+```
+
+Allure results and Cucumber reports are written back to the host under `target/allure-results` and `target/cucumber-reports`.
+
+### Plain Docker
+
+```bash
+# Build
+docker build -t dulux-e2e-tests .
+
+# Run the smoke suite (default)
+docker run --rm --shm-size=1g dulux-e2e-tests
+
+# Run a custom tag expression
+docker run --rm --shm-size=1g -e CUCUMBER_TAGS="@desktop" dulux-e2e-tests
+
+# Persist reports to the host
+docker run --rm --shm-size=1g \
+  -v "$(pwd)/target/allure-results:/app/target/allure-results" \
+  dulux-e2e-tests
+```
+
+> **Why `--shm-size=1g`?** Chromium can crash with the default 64 MB `/dev/shm` inside containers. Compose sets this automatically.
+
+### Configuration
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `HEADLESS` | `true` | Headless browser (always `true` in the container) |
+| `CUCUMBER_TAGS` | `@smoke` | Cucumber tag expression to run |
 
 ---
 
@@ -285,11 +339,11 @@ mvn allure:serve        # OR serve the live report in the browser
 
 > 📸 *The report screenshots above live in `docs/images/`. See `docs/images/README.md` for exactly which views to capture and how to regenerate them.*
 
-> **One-time GitHub Pages setup:** Settings → Pages → Source **Deploy from a branch** → Branch **`gh-pages` / (root)** → Save. The `gh-pages` branch is created automatically after the first successful CI run.
+For **Cucumber scenarios**, a screenshot is attached to the report automatically on failure (visible in Cucumber HTML report and Allure).
 
 ---
 
-## ⚙️ CI/CD
+## ⚙️ GitHub Actions CI
 
 The pipeline is defined in [`.github/workflows/e2e-tests.yml`](.github/workflows/e2e-tests.yml).
 

@@ -1,0 +1,28 @@
+# Build output & local caches (rebuilt inside the image)
+target/
+.m2/
+
+# Git & CI metadata
+.git/
+.github/
+.gitignore
+
+# IDE / editor
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Local artefacts not needed for a test run
+Screenshots/
+.allure/
+*.png
+
+# OS noise
+.DS_Store
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml
