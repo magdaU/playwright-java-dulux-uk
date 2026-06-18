@@ -272,10 +272,7 @@ After every push to `main`, the Allure report is published to:
 
 ### 🥒 Cucumber HTML report
 
-<div align="center">
-  <img src="docs/images/cucumber-report.png" alt="Cucumber HTML report" width="800">
-  <br><em>Cucumber HTML report (target/cucumber-reports/report.html)</em>
-</div>
+A standalone HTML report is also generated on every run at `target/cucumber-reports/report.html`.
 
 ### Generate locally
 
@@ -296,11 +293,6 @@ mvn allure:serve        # OR serve the live report in the browser
 ## ⚙️ CI/CD
 
 The pipeline is defined in [`.github/workflows/e2e-tests.yml`](.github/workflows/e2e-tests.yml).
-
-<div align="center">
-  <img src="docs/images/ci-pipeline.png" alt="GitHub Actions pipeline" width="800">
-  <br><em>GitHub Actions — smoke suite on every push/PR</em>
-</div>
 
 ### When it runs
 
