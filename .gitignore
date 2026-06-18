@@ -40,6 +40,7 @@ build/
 
 *.png
 /screenshots
+.allure/
 
 ### Documentation assets (must be committed so they render in the README) ###
 !docs/
