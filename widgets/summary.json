@@ -1,1 +1,1 @@
-{"reportName":"Allure Report","testRuns":[],"statistic":{"failed":0,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":2},"time":{"start":1782291915931,"stop":1782291943065,"duration":27134,"minDuration":6468,"maxDuration":20641,"sumDuration":27109}}
+{"reportName":"Dulux E2E Smoke Suite","testRuns":[],"statistic":{"failed":0,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":2},"time":{"start":1782292900059,"stop":1782292928365,"duration":28306,"minDuration":7285,"maxDuration":20997,"sumDuration":28282}}
