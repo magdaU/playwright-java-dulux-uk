@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Ignored tests",
+    "matchedStatuses": ["skipped"]
+  },
+  {
+    "name": "Product defects",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*AssertionError.*|.*assertion.*|.*expected.*but.*"
+  },
+  {
+    "name": "Element not found / locator issues",
+    "matchedStatuses": ["broken", "failed"],
+    "messageRegex": ".*(TimeoutError|Timeout|waiting for|locator|selector|element is not).*"
+  },
+  {
+    "name": "Navigation / page load issues",
+    "matchedStatuses": ["broken", "failed"],
+    "messageRegex": ".*(net::ERR|navigation|ERR_|Page.*closed|net::).*"
+  },
+  {
+    "name": "Test infrastructure problems",
+    "matchedStatuses": ["broken"]
+  }
+]
