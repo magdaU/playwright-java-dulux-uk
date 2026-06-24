@@ -44,7 +44,7 @@ The project is built the way a commercial QA framework is built: a clean **Page 
 - 📱 **Cross-viewport coverage** — the same journeys run at desktop (1920×1080) and mobile (375×667) resolutions.
 - 🔌 **Dependency Injection** — PicoContainer shares a single `CucumberContext` (browser state + business helpers) across all step definitions.
 - ✅ **Assertions in the test layer only** — page objects never assert; AssertJ fluent assertions live in tests/steps.
-- 📊 **Allure + Cucumber HTML reporting** — screenshot auto-attached to every failed scenario.
+- 📊 **Allure + Cucumber HTML reporting** — screenshot auto-attached to every failed scenario, plus Trend, Categories, Executors and Environment dashboard widgets.
 - 🚀 **CI/CD with GitHub Actions** — smoke suite on every push/PR, artifacts uploaded, live report deployed to GitHub Pages.
 
 ---
@@ -323,6 +323,21 @@ After every push to `main`, the Allure report is published to:
   <br><em>Allure — scenarios, steps and durations</em>
 </div>
 
+#### Dashboard widgets
+
+The published report is enriched with the standard Allure dashboard widgets:
+
+| Widget | What it shows | How it's populated |
+|---|---|---|
+| 📈 **Trend** | Pass/fail history across builds | CI restores the previous run's `history/` from the `gh-pages` branch before generating, so the trend accumulates over time |
+| 🗂️ **Categories** | Failures grouped into defect buckets (product defects, locator/timeout, navigation, infrastructure) | `categories.json` copied into `allure-results` |
+| 🖥️ **Executors** | The CI build that produced the report, linked back to the GitHub Actions run | `executor.json` generated in CI from the run metadata |
+| 🌱 **Environment** | Application, URL, browser and tooling versions | `environment.properties` copied into `allure-results` |
+
+`categories.json` and `environment.properties` live under [`src/test/resources/allure/`](src/test/resources/allure/) and are written into `target/allure-results` at runtime by a `@BeforeAll` hook, so the **Categories** and **Environment** widgets appear in local, Docker and CI reports alike. The **Executors** and **Trend** widgets are populated by the CI pipeline only.
+
+> ℹ️ The **Trend** chart needs at least two builds on `main` to show history — the first run seeds the baseline.
+
 ### 🥒 Cucumber HTML report
 
 A standalone HTML report is also generated on every run at `target/cucumber-reports/report.html`.
@@ -359,12 +374,14 @@ The pipeline is defined in [`.github/workflows/e2e-tests.yml`](.github/workflows
 
 ### Pipeline steps
 
-1. Checkout + set up **Temurin JDK 21** (Maven cache).
-2. Install the **Playwright Chromium** browser.
-3. Run the smoke suite headless (`-Dheadless=true`).
-4. Generate the **Allure** report.
-5. Upload artifacts (`cucumber-reports`, `allure-results`).
-6. Publish the report to **GitHub Pages** (only on `main`).
+1. Checkout + restore the previous **Allure history** from `gh-pages` (for the Trend widget).
+2. Set up **Temurin JDK 21** (Maven cache).
+3. Install the **Playwright Chromium** browser.
+4. Run the smoke suite headless (`-Dheadless=true`).
+5. Add Allure metadata — `environment.properties`, `categories.json`, `executor.json` and the carried-over history.
+6. Generate the **Allure** report.
+7. Upload artifacts (`cucumber-reports`, `allure-results`).
+8. Publish the report to **GitHub Pages** (only on `main`).
 
 ### Run manually with a custom tag
 
