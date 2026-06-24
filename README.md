@@ -406,6 +406,40 @@ The pipeline is defined in [`.github/workflows/e2e-tests.yml`](.github/workflows
 - ✅ Set up **GitHub Actions** CI (smoke on every push/PR, artifacts uploaded)
 - ✅ Extend CI triggers to `fix/**` branches
 
+**To improve:**
+
+> A point-by-point backlog of concrete clean-ups and enhancements found in the current code.
+
+*Code quality / DRY*
+
+1. **Collapse the two duplicated locator methods in `ColorSelectionPage`** — `chooseColour` and `choseSpecificTypeColor` have identical bodies (`getByRole(BUTTON).setName(...)`). Merge into one method and fix the typo `choseSpecificTypeColor` → `chooseShade`.
+2. **De-duplicate the journey logic** — the same flows are implemented twice: once in the JUnit tests (`TesterProductTest` / `VisualizerAppTest` via `BaseTest`) and once in the Cucumber layer (`CucumberContext` + steps). Pick one source of truth, or have the JUnit tests reuse the business methods, so a UI change is fixed in one place.
+3. **Single source for viewport sizes** — `1920×1080` / `375×667` are hard-coded in both `BaseTest` and `CucumberContext`. Extract to a shared constant/config.
+4. **Remove the manual timestamped screenshots** — `TesterProductTest` / `VisualizerAppTest` write `Screenshots/.../<timestamp>.png` on *every* run (even passing ones). This duplicates Allure's screenshot-on-failure; attach to Allure instead or drop it.
+5. **Tidy small smells** — unused `AriaRole` import in `HomePage`, and the `DUlUX_PAGE` constant typo (inconsistent casing).
+
+*Test design / robustness*
+
+6. **Wrap raw selectors in page objects** — `page.locator("pre")`, `page.locator("body")` and the OneTrust id `#onetrust-reject-all-handler` are used directly in tests/steps. Move them behind page-object methods so locators live in one layer.
+7. **Make cookie consent resilient** — `rejectAllCookies()` clicks immediately; if the banner is slow or absent the run breaks. Guard with a presence/visibility check so it tolerates both states.
+8. **Add a bounded retry policy for flaky steps** — running against live production, a small, explicit, *reported* retry (e.g. Surefire `rerunFailingTestsCount` or Cucumber retry) would cut false reds without hiding real failures.
+9. **Centralise test data** — shades (`Gentle Lavender`), colour families (`Violet`) and expected URLs are scattered across features and tests. Externalise so the data matrix can grow without code edits.
+
+*Coverage / scale*
+
+10. **Cross-browser** — both `BaseTest` and `CucumberContext` hard-code `playwright.chromium()`. Parameterise to also run Firefox and WebKit.
+11. **Parallel execution** — scenarios run serially today; enabling JUnit/Cucumber parallelism would shorten CI feedback.
+
+*Tooling / CI*
+
+12. **Enforce style in CI** — a Checkstyle config exists for the IDE but isn't run by Maven/CI. Wire the `maven-checkstyle-plugin` into the build so style is gated, not optional.
+13. **Generate the Allure report inside Docker** — the container produces `allure-results` but leaves report generation manual; an optional step would make the image self-contained.
+
+*Non-functional / advanced testing*
+
+14. **Visual regression testing** — the suite verifies behaviour but not appearance. Add baseline snapshot comparison (Playwright's built-in `assertThat(page).hasScreenshot()` for self-hosted baselines, or Percy/Applitools for a managed service) on key pages — colour finder, shade page, cart — to catch unintended layout/styling regressions. Gate it as a separate, non-blocking job first while baselines stabilise.
+15. **Lighthouse CI** — add a `lhci` job to the GitHub Actions pipeline to audit performance, accessibility, SEO and best-practices budgets on the critical pages, with thresholds that fail the build on regression. Complements the functional suite with quality signals it doesn't currently measure (and gives a first, cheap accessibility check).
+16. **Load / performance testing with k6** — model the critical revenue path (browse → select shade → add tester) as a [k6](https://k6.io/) script and run it on a schedule against a non-production environment to track latency and error rate under concurrency. Keep it out of the per-push pipeline (separate workflow / nightly) so it never gates fast feedback.
 
 ---
 
