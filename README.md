@@ -4,8 +4,8 @@
 
 ### UI end-to-end test automation for [Dulux UK](https://www.dulux.co.uk) — Java · Playwright · Cucumber BDD · Allure · CI/CD
 
-[![E2E Tests](https://github.com/magdaU/playwright-e2e-test-dulux/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/magdaU/playwright-e2e-test-dulux/actions/workflows/e2e-tests.yml)
-[![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=qameta&logoColor=white)](https://magdau.github.io/playwright-e2e-test-dulux/)
+[![E2E Tests](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml)
+[![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=qameta&logoColor=white)](https://magdau.github.io/playwright-java-dulux-uk/)
 [![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
 [![Maven](https://img.shields.io/badge/Maven-3.x-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-1.50-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/java/)
@@ -173,8 +173,8 @@ src/
 
 ### Clone & install browsers
 ```bash
-git clone https://github.com/magdaU/playwright-e2e-test-dulux.git
-cd playwright-e2e-test-dulux
+git clone https://github.com/magdaU/playwright-java-dulux-uk.git
+cd playwright-java-dulux-uk
 
 # install the Playwright browser binaries (Chromium)
 mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
@@ -316,7 +316,7 @@ Two reports are produced on every run, plus a screenshot attached to any failing
 
 After every push to `main`, the Allure report is published to:
 
-**➡️ https://magdau.github.io/playwright-e2e-test-dulux/**
+**➡️ https://magdau.github.io/playwright-java-dulux-uk/**
 
 <div align="center">
   <img src="docs/images/allure-suites.png" alt="Allure suites / behaviours view" width="800">
