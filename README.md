@@ -11,6 +11,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-1.50-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/java/)
 [![JUnit5](https://img.shields.io/badge/JUnit-5-25A162?logo=junit5&logoColor=white)](https://junit.org/junit5/)
 [![Cucumber](https://img.shields.io/badge/Cucumber-BDD-23D96C?logo=cucumber&logoColor=white)](https://cucumber.io/)
+[![Test Strategy](https://img.shields.io/badge/Test-Strategy-8A2BE2?logo=readthedocs&logoColor=white)](docs/TEST_STRATEGY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 </div>
@@ -34,6 +35,8 @@ A production-style **UI end-to-end test automation framework** that exercises re
 The project is built the way a commercial QA framework is built: a clean **Page Object Model**, a **Cucumber BDD** layer that describes behaviour in business language, **AssertJ** assertions kept out of the page layer, **Allure** reporting with screenshots on failure, and a **GitHub Actions** pipeline that runs the smoke suite on every push and publishes a live report to GitHub Pages.
 
 > **Why Dulux?** It's a real, public, JavaScript-heavy e-commerce site — cookie banners, dropdown navigation, new-tab flows and responsive layouts — which makes it a realistic target for demonstrating robust, non-flaky automation.
+
+> 🧭 **New here?** Read the [**Test Strategy**](docs/TEST_STRATEGY.md) — what we test, why, the scope, risk analysis and the roadmap.
 
 ---
 
