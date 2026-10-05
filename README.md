@@ -4,7 +4,7 @@
 
 ### UI end-to-end test automation for [Dulux UK](https://www.dulux.co.uk) — Java · Playwright · Cucumber BDD · Allure · CI/CD
 
-[![E2E Tests](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml)
+[![E2E Tests](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml/badge.svg?branch=main)](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 </div>
