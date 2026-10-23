@@ -46,7 +46,7 @@ jobs:
           cache: maven
 
       - name: Install Playwright browser
-        run: mvn -B -q exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+        run: mvn -B -q exec:java -Dexec.classpathScope=test -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
 
       - name: Run Cucumber tests
         run: mvn -B -Dheadless=true -Dtest=CucumberRunner "-Dcucumber.filter.tags=${CUCUMBER_TAGS}" test
@@ -129,7 +129,7 @@ jobs:
           cache: maven
 
       - name: Install Playwright browser
-        run: mvn -B -q exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+        run: mvn -B -q exec:java -Dexec.classpathScope=test -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
 
       - name: Run visual regression checks
         run: mvn -B -Dheadless=true -Dtest=VisualRegressionTest test

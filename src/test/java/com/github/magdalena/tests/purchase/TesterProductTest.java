@@ -1,9 +1,8 @@
 package com.github.magdalena.tests.purchase;
 
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.ByteArrayInputStream;
 
+import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import com.github.magdalena.page.component.AlertComponent;
 import com.github.magdalena.page.pom.CartPage;
 import com.github.magdalena.tests.BaseTest;
-import com.microsoft.playwright.Page;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -62,9 +60,7 @@ public class TesterProductTest extends BaseTest {
 
         // THEN
         assertThat(cartPage.getQuantity()).isVisible();
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("Screenshots/TesterProductTest/desktop_" + timestamp + ".png")));
+        Allure.addAttachment("basket-desktop", new ByteArrayInputStream(page.screenshot()));
 
         Assertions.assertThat(cartPage.getQuantity().inputValue()).isEqualTo("1");
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
@@ -98,9 +94,7 @@ public class TesterProductTest extends BaseTest {
 
         // THEN
         assertThat(cartPage.getQuantity()).isVisible();
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        page.screenshot(new Page.ScreenshotOptions()
-                .setPath(Paths.get("Screenshots/TesterProductTest/mobile_" + timestamp + ".png")));
+        Allure.addAttachment("basket-mobile", new ByteArrayInputStream(page.screenshot()));
 
         Assertions.assertThat(cartPage.getQuantity().inputValue()).isEqualTo("1");
         assertThat(cartPage.findText("Dulux Colour Tester")).isVisible();
