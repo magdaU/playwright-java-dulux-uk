@@ -142,6 +142,19 @@ alternative). See [Architecture](architecture.md) for how it's wired.
 - **State verification** — basket starts empty → exactly 1 item with the right product and
   shade after adding (guards against silent over/under-counting).
 - **Cross-configuration testing** — desktop vs. mobile as distinct navigation paths.
+- **Equivalence partitioning — valid and invalid partitions** — search is tested with an
+  existing shade (TC-13) and a shade that does not exist (TC-14); the headless switch with
+  a valid and an invalid value (TC-25).
+- **Boundary value analysis** — basket quantity minimum of 1 (TC-18) and the 0.5 %
+  pixel-difference allowance of the visual comparison (TC-24).
+- **State transition** — basket goes empty → one item → empty (TC-17).
+- **Negative testing** — one representative invalid input per feature (TC-14).
+
+**Production-safety rule.** The suite runs against a live retail site, so new tests must
+not load it: one representative value per partition, no loops or request bursts, no
+hostile or oversized input, no probing of upper limits, and logic that does not need the
+site (thresholds, configuration) is tested offline as unit tests. Each documented test
+case states its production load.
 
 ---
 

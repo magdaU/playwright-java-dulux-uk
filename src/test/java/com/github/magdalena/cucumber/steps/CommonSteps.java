@@ -21,6 +21,12 @@ public class CommonSteps {
         assertThat(ctx.cartPage().getBasketEmptyText()).isVisible();
     }
 
+    @Given("a {word} customer is on the home page")
+    public void aCustomerIsOnTheHomePage(String viewport) {
+        ctx.useViewport(viewport);
+        ctx.openHomePageAndRejectCookies();
+    }
+
     @Given("a {word} customer is viewing shade {string}")
     public void aCustomerIsViewingShade(String viewport, String shade) {
         ctx.useViewport(viewport);

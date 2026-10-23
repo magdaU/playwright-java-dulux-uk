@@ -33,11 +33,11 @@
 | **Steps** | Same as TC-01, but "Find a colour" is reached via the hamburger menu, not the top nav |
 | **Expected result** | Same as TC-01 |
 
-### TC-08 — Basket increment/decrement/remove *(manual/candidate)*
+### TC-08 — Basket increment/decrement/remove *(superseded by TC-17 and TC-18)*
 | | |
 |---|---|
 | **Priority** | P2 |
-| **Automation** | 🟡 candidate — see [Test Strategy §14](TEST_STRATEGY.md#14-coverage-gaps--improvement-opportunities) |
+| **Automation** | ✅ split into [TC-17](#tc-17--removing-the-only-item-returns-the-basket-to-the-empty-state) and [TC-18](#tc-18--quantity-cannot-go-below-the-minimum-of-1) |
 | **Preconditions** | Basket already contains 1 tester (result of TC-01) |
 | **Steps** | 1. Increase quantity via the quantity control.<br>2. Decrease quantity back to 1.<br>3. Remove the item entirely. |
 | **Expected result** | Quantity updates correctly at each step; basket shows the "empty" state after removal |
@@ -117,11 +117,11 @@
 
 ## Navigation & search
 
-### TC-11 — Site search returns the searched shade *(manual/candidate)*
+### TC-11 — Site search returns the searched shade *(superseded by TC-13 and TC-14)*
 | | |
 |---|---|
 | **Priority** | P2 |
-| **Automation** | 🟡 candidate — `searchForShade()` already exists in `CucumberContext` and is exercised as setup for TC-03/TC-04, but has no dedicated scenario asserting *search itself* works for an arbitrary term |
+| **Automation** | ✅ see [TC-13](#tc-13--search-for-an-existing-shade) and [TC-14](#tc-14--search-for-a-shade-that-does-not-exist) |
 | **Preconditions** | On the home page |
 | **Steps** | 1. Open search.<br>2. Enter a known shade name.<br>3. Press Enter. |
 | **Expected result** | Navigates to that shade's detail page |
@@ -134,6 +134,64 @@
 | **Preconditions** | Fresh browser context, cookie banner not yet interacted with |
 | **Steps** | 1. Attempt to interact with the page behind the banner before dismissing it. |
 | **Expected result** | The banner blocks the intended interaction until "Reject All" is clicked |
+
+### TC-13 — Search for an existing shade
+| | |
+|---|---|
+| **Priority** | P1 · `@smoke` |
+| **ISTQB technique** | Equivalence partitioning — valid partition (existing shade name) |
+| **Automation** | ✅ [`search.feature` — Scenario 1](../src/test/resources/features/search.feature) |
+| **Steps** | 1. Open the home page, reject cookies.<br>2. Search for "Violet Morning". |
+| **Expected result** | Customer lands on `/en/search-results?search=…` with the heading "search for 'Violet Morning'" |
+| **Production load** | 1 navigation + 1 search request |
+
+### TC-14 — Search for a shade that does not exist
+| | |
+|---|---|
+| **Priority** | P2 · `@negative` |
+| **ISTQB technique** | Equivalence partitioning — invalid partition (no such shade) |
+| **Automation** | ✅ [`search.feature` — Scenario 2](../src/test/resources/features/search.feature) |
+| **Steps** | 1. Open the home page, reject cookies.<br>2. Search for "Zzxqvbn Nonexistent". |
+| **Expected result** | Results page for that term shows "Sorry, we couldn't find any results for '…'" — no error page |
+| **Production load** | 1 navigation + 1 search request. One representative value only: no hostile input, no long strings |
+
+### TC-17 — Removing the only item returns the basket to the empty state
+| | |
+|---|---|
+| **Priority** | P1 · `@smoke` |
+| **ISTQB technique** | State transition — empty → one item → empty |
+| **Automation** | ✅ [`basket.feature` — Scenario 1](../src/test/resources/features/basket.feature) |
+| **Steps** | As TC-01, then click "Remove" on the basket item |
+| **Expected result** | "Your basket is empty" is shown and the quantity control is gone |
+| **Production load** | Same journey as TC-01 plus one remove action |
+
+### TC-18 — Quantity cannot go below the minimum of 1
+| | |
+|---|---|
+| **Priority** | P2 · `@boundary` |
+| **ISTQB technique** | Boundary value analysis — quantity minimum is 1: values 1 (min) and 2 (min + 1); the decrease control is disabled at the minimum |
+| **Automation** | ✅ [`basket.feature` — Scenario 2](../src/test/resources/features/basket.feature) |
+| **Steps** | As TC-01, then: increase to 2, decrease back to 1 |
+| **Expected result** | At 1 the "Decrease quantity" button is disabled; quantity shows 2 after increase and 1 after decrease |
+| **Production load** | Same journey as TC-01 plus two single clicks. The upper boundary is deliberately not probed on production |
+
+### TC-24 — Visual comparison threshold boundary
+| | |
+|---|---|
+| **Priority** | P3 · `@unit` |
+| **ISTQB technique** | Boundary value analysis (2-value) on the 0.5 % different-pixel allowance |
+| **Automation** | ✅ `VisualComparisonUtilBoundaryTest` |
+| **Expected result** | A difference exactly at the allowance (200 of 40 000 px) matches; one pixel more fails |
+| **Production load** | None — in-memory images |
+
+### TC-25 — Headless switch partitions
+| | |
+|---|---|
+| **Priority** | P3 · `@unit` |
+| **ISTQB technique** | Equivalence partitioning — valid value ("true") and invalid free text |
+| **Automation** | ✅ `PlaywrightConfigTest` |
+| **Expected result** | "true" enables headless; a non-boolean value falls back to headed |
+| **Production load** | None |
 
 ---
 

@@ -12,6 +12,9 @@ public class CartPage extends BasePage {
     private static final String YOUR_BASKET_IS_EMPTY_TEXT = "Your basket is empty";
     private static final String CONTINUE_SHOPPING_TEXT = "Continue shopping";
     private static final String CHECKOUT_TEXT = "Checkout";
+    private static final String DECREASE_QUANTITY = "Decrease quantity";
+    private static final String INCREASE_QUANTITY = "Increase quantity";
+    private static final String REMOVE_ITEM = "Remove";
 
     public CartPage(Page page) {
         super(page);
@@ -39,6 +42,22 @@ public class CartPage extends BasePage {
         // accessible name — getByLabel("Quantity") matches all 4 and fails Playwright's
         // strict-mode uniqueness. Target the input specifically by role instead.
         return page.getByRole(AriaRole.SPINBUTTON, new Page.GetByRoleOptions().setName(QUANTITY_INPUT_LABEL));
+    }
+
+    public Locator getDecreaseQuantityButton() {
+        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(DECREASE_QUANTITY));
+    }
+
+    public void increaseQuantity() {
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(INCREASE_QUANTITY)).click();
+    }
+
+    public void decreaseQuantity() {
+        getDecreaseQuantityButton().click();
+    }
+
+    public void removeItem() {
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(REMOVE_ITEM).setExact(true)).click();
     }
 
     public Locator findText(String text) {
