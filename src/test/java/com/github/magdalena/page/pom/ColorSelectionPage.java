@@ -22,8 +22,16 @@ public class ColorSelectionPage extends BasePage {
         clickButtonByName(shade);
     }
 
+    public Locator getColourFamilyButton(String colourFamily) {
+        return buttonByName(colourFamily);
+    }
+
     private void clickButtonByName(String name) {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(name)).click();
+        buttonByName(name).click();
+    }
+
+    private Locator buttonByName(String name) {
+        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(name));
     }
 
     public void buyATesterColour() {
