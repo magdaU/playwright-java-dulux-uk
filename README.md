@@ -5,6 +5,7 @@
 ### UI end-to-end test automation for [Dulux UK](https://www.dulux.co.uk) — Java · Playwright · Cucumber BDD · Allure · CI/CD
 
 [![E2E Tests](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml/badge.svg?branch=main)](https://github.com/magdaU/playwright-java-dulux-uk/actions/workflows/e2e-tests.yml)
+[![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=qameta&logoColor=white)](https://magdau.github.io/playwright-java-dulux-uk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 </div>
@@ -24,12 +25,12 @@ Also available as a [Python port](https://github.com/magdaU/playwright-python-du
 | Tool | Version | Purpose |
 |---|---|---|
 | Java | 25 | Language |
-| Playwright | 1.50 | Browser automation (Chromium, Firefox, WebKit) |
+| Playwright | 1.57 | Browser automation (Chromium, Firefox, WebKit) |
 | JUnit 5 | – | Test runner, launched via `cucumber-junit-platform-engine` |
 | Cucumber | 7.18 | BDD layer — Gherkin feature files → JUnit test items |
 | PicoContainer (`cucumber-picocontainer`) | – | Dependency injection, one context instance per scenario |
 | AssertJ | – | Fluent assertions |
-| Allure (`allure-cucumber7-jvm`) | 2.29 | Test reporting with Gherkin step rendering |
+| Allure (`allure-cucumber7-jvm`) | 2.30 | Test reporting with Gherkin step rendering |
 | Maven | – | Build tool |
 | Docker / Docker Compose | – | Containerised, reproducible test runs |
 | GitHub Actions | – | CI/CD pipeline, GitHub Pages |
@@ -86,6 +87,16 @@ mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@smoke"
 
 ```bash
 docker compose up --build
+```
+
+### Allure report
+
+The latest report from `main` (results, trends, categories, environment) is published to GitHub Pages after every push: **https://magdau.github.io/playwright-java-dulux-uk/**
+
+To build it locally after a run:
+
+```bash
+mvn allure:serve
 ```
 
 ---
