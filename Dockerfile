@@ -22,6 +22,7 @@ RUN mvn -B -q dependency:go-offline
 
 # 2) Install Chromium + the OS libraries it needs (apt requires root here).
 RUN mvn -B -q exec:java \
+        -Dexec.classpathScope=test \
         -Dexec.mainClass=com.microsoft.playwright.CLI \
         -Dexec.args="install --with-deps chromium"
 
