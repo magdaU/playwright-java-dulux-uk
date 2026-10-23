@@ -9,3 +9,9 @@ Feature: Find a colour
     Given a desktop customer is on the home page
     When the customer opens the colour finder
     Then the colour family "Violet" is available
+
+  @smoke @mobile
+  Scenario: Mobile customer opens the colour finder
+    Given a mobile customer is on the home page
+    When the customer opens the colour finder using mobile navigation
+    Then the colour family "Violet" is available

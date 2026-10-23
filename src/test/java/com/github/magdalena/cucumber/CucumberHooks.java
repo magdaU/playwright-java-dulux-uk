@@ -54,6 +54,7 @@ public class CucumberHooks {
     @After
     public void afterScenario(Scenario scenario) {
         if (scenario.isFailed()) {
+            Allure.addAttachment("failure-context", "text/plain", ctx.describeFailureContext());
             byte[] screenshot = ctx.takeScreenshot();
             if (screenshot.length > 0) {
                 scenario.attach(screenshot, "image/png", "failure-screenshot");

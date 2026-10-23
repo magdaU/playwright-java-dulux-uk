@@ -5,9 +5,13 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.util.regex.Pattern;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class BasketSteps {
+
+    private static final Pattern PRODUCT_LISTING_URL = Pattern.compile(".*/en/products.*");
 
     private final CucumberContext ctx;
 
@@ -28,6 +32,16 @@ public class BasketSteps {
     @When("the customer decreases the quantity")
     public void theCustomerDecreasesTheQuantity() {
         ctx.cartPage().decreaseQuantity();
+    }
+
+    @When("the customer continues shopping")
+    public void theCustomerContinuesShopping() {
+        ctx.cartPage().continueShopping();
+    }
+
+    @Then("the product listing page is shown")
+    public void theProductListingPageIsShown() {
+        assertThat(ctx.page()).hasURL(PRODUCT_LISTING_URL);
     }
 
     @Then("the basket is empty")
