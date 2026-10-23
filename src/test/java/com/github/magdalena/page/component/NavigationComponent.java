@@ -1,6 +1,7 @@
 package com.github.magdalena.page.component;
 
 import com.github.magdalena.page.BasePage;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
@@ -37,7 +38,9 @@ public class NavigationComponent extends BasePage {
     }
 
     public void searchClickOnPage(){
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(SEARCH_BUTTON)).click();
+        // The search results page also has a "Search" submit button, so scope to the header nav.
+        page.getByRole(AriaRole.NAVIGATION)
+                .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(SEARCH_BUTTON)).click();
     }
 
     public void inputColorOnSearchBoxAndEnter(String color){

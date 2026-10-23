@@ -5,6 +5,7 @@ import com.github.magdalena.page.component.NavigationComponent;
 import com.github.magdalena.page.pom.CartPage;
 import com.github.magdalena.page.pom.ColorSelectionPage;
 import com.github.magdalena.page.pom.HomePage;
+import com.github.magdalena.page.pom.SearchResultsPage;
 import com.github.magdalena.support.PlaywrightConfig;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -29,6 +30,7 @@ public class CucumberContext {
     private NavigationComponent navigationPage;
     private ColorSelectionPage colorSelectionPage;
     private CartPage cartPage;
+    private SearchResultsPage searchResultsPage;
     private AlertComponent alertComponent;
     private Page visualizerTab;
 
@@ -112,6 +114,10 @@ public class CucumberContext {
         return cartPage;
     }
 
+    public SearchResultsPage searchResultsPage() {
+        return searchResultsPage;
+    }
+
     public Page page() {
         return page;
     }
@@ -150,6 +156,7 @@ public class CucumberContext {
         navigationPage = new NavigationComponent(page);
         colorSelectionPage = new ColorSelectionPage(page);
         cartPage = new CartPage(page);
+        searchResultsPage = new SearchResultsPage(page);
         alertComponent = new AlertComponent(page);
         visualizerTab = null;
     }
