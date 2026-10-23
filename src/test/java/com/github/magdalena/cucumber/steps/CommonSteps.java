@@ -49,6 +49,11 @@ public class CommonSteps {
         ctx.openColourFinder(false);
     }
 
+    @When("the customer opens the colour finder using mobile navigation")
+    public void theCustomerOpensTheColourFinderUsingMobileNavigation() {
+        ctx.openColourFinder(true);
+    }
+
     @When("the customer adds a tester to the basket")
     public void theCustomerAddsATesterToTheBasket() {
         ctx.addTesterToBasket();

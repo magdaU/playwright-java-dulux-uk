@@ -26,3 +26,9 @@ Feature: Manage the basket
     When the customer decreases the quantity
     Then the quantity is 1
     And the quantity cannot be decreased
+
+  @smoke @desktop
+  Scenario: Desktop customer continues shopping from an empty basket
+    Given a desktop customer starts with an empty basket
+    When the customer continues shopping
+    Then the product listing page is shown

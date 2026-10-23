@@ -4,19 +4,29 @@
     "matchedStatuses": ["skipped"]
   },
   {
-    "name": "Product defects",
+    "name": "Visual regression mismatch (layout changed)",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s).*Visual regression check.*"
+  },
+  {
+    "name": "Product defects (assertion failed)",
     "matchedStatuses": ["failed"],
-    "messageRegex": ".*AssertionError.*|.*assertion.*|.*expected.*but.*"
+    "messageRegex": "(?s).*(AssertionFailedError|AssertionError|Locator expected|Page expected|expected.*but).*"
   },
   {
-    "name": "Element not found / locator issues",
-    "matchedStatuses": ["broken", "failed"],
-    "messageRegex": ".*(TimeoutError|Timeout|waiting for|locator|selector|element is not).*"
+    "name": "Ambiguous locator (strict mode violation)",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s).*strict mode violation.*"
   },
   {
-    "name": "Navigation / page load issues",
-    "matchedStatuses": ["broken", "failed"],
-    "messageRegex": ".*(net::ERR|navigation|ERR_|Page.*closed|net::).*"
+    "name": "Navigation / network problems",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s).*(net::ERR|Page closed|Target closed|Target page, context or browser has been closed|Navigation failed).*"
+  },
+  {
+    "name": "Element not found / timeout waiting for action",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s).*(TimeoutError|Timeout \\d+ms exceeded).*"
   },
   {
     "name": "Test infrastructure problems",
