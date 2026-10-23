@@ -175,6 +175,16 @@
 | **Expected result** | At 1 the "Decrease quantity" button is disabled; quantity shows 2 after increase and 1 after decrease |
 | **Production load** | Same journey as TC-01 plus two single clicks. The upper boundary is deliberately not probed on production |
 
+### TC-26 — Colour finder opens and lists colour families
+| | |
+|---|---|
+| **Priority** | P1 · `@smoke` |
+| **ISTQB technique** | Smoke test of the entry point to the main customer journey |
+| **Automation** | ✅ [`colour_finder.feature`](../src/test/resources/features/colour_finder.feature) |
+| **Steps** | 1. Open the home page, reject cookies.<br>2. Open "Find a colour" from the top nav. |
+| **Expected result** | The colour family "Violet" is available on the colour finder page |
+| **Production load** | 2 navigations, no basket changes |
+
 ### TC-24 — Visual comparison threshold boundary
 | | |
 |---|---|

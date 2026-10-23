@@ -68,15 +68,22 @@ public class CucumberContext {
 
     public void browseToShade(String colourFamily, String shade, boolean mobileNavigation) {
         openHomePage();
+        openColourFinder(mobileNavigation);
+        colorSelectionPage.chooseColour(colourFamily);
+        colorSelectionPage.chooseShade(shade);
+    }
 
+    public void openColourFinder(boolean mobileNavigation) {
         if (mobileNavigation) {
             navigationPage.clickDropdownHamburgerMenu();
         }
 
         navigationPage.clickDropdownFindColour();
         navigationPage.clickFindColour();
-        colorSelectionPage.chooseColour(colourFamily);
-        colorSelectionPage.chooseShade(shade);
+    }
+
+    public ColorSelectionPage colorSelectionPage() {
+        return colorSelectionPage;
     }
 
     public void searchForShade(String shade) {
