@@ -30,9 +30,9 @@
   },
   {
     "name": "Element not found / timeout waiting for action",
-    "description": "Playwright timed out waiting for an element or action. Read the call log in the message: the locator may be wrong, the element hidden, covered or disabled, or the page too slow; fix the locator or wait condition before raising timeouts.",
+    "description": "Playwright timed out waiting for an element or action. Check the call log in the message: the locator may be wrong, the element hidden, covered or disabled, or the page too slow; fix the locator or wait condition before raising timeouts.",
     "matchedStatuses": ["failed", "broken"],
-    "messageRegex": "(?s).*(TimeoutError|Timeout \\d+ms exceeded|waiting for|Call log).*"
+    "messageRegex": "(?s).*(TimeoutError|Timeout \\d+ms exceeded).*"
   },
   {
     "name": "Test infrastructure problems",
