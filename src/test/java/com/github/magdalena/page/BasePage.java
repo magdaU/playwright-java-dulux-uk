@@ -1,6 +1,8 @@
 package com.github.magdalena.page;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 public abstract class BasePage {
 
@@ -10,6 +12,10 @@ public abstract class BasePage {
 
     public BasePage(Page page) {
         this.page = page;
+    }
+
+    protected Locator buttonByName(String name) {
+        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(name));
     }
 }
 

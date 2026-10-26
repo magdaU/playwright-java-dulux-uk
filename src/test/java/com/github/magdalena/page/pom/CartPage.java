@@ -20,7 +20,7 @@ public class CartPage extends BasePage {
         super(page);
     }
 
-    public void openCartPage () {
+    public void openCartPage() {
         page.navigate(CART_PAGE_URL);
     }
 
@@ -45,11 +45,11 @@ public class CartPage extends BasePage {
     }
 
     public Locator getDecreaseQuantityButton() {
-        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(DECREASE_QUANTITY));
+        return buttonByName(DECREASE_QUANTITY);
     }
 
     public void increaseQuantity() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(INCREASE_QUANTITY)).click();
+        buttonByName(INCREASE_QUANTITY).click();
     }
 
     public void decreaseQuantity() {
