@@ -3,11 +3,9 @@ package com.github.magdalena.page.pom;
 import com.github.magdalena.page.BasePage;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 
 public class HomePage extends BasePage {
 
-    private static final String DUlUX_PAGE = "https://www.dulux.co.uk";
     private static final String REJECT_ALL = "#onetrust-reject-all-handler";
     private static final String COOKIE_BANNER = "#onetrust-banner-sdk";
 
@@ -16,7 +14,7 @@ public class HomePage extends BasePage {
     }
 
     public void openHomePage() {
-        page.navigate(DUlUX_PAGE);
+        page.navigate(BASE_URL);
         page.waitForLoadState();
     }
 

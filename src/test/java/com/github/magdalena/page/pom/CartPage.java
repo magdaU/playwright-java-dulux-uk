@@ -7,7 +7,7 @@ import com.microsoft.playwright.options.AriaRole;
 
 public class CartPage extends BasePage {
 
-    private static final String CART_PAGE_URL = "https://www.dulux.co.uk/en/store/cart";
+    private static final String CART_PAGE_URL = BASE_URL + "/en/store/cart";
     private static final String QUANTITY_INPUT_LABEL = "Quantity input";
     private static final String YOUR_BASKET_IS_EMPTY_TEXT = "Your basket is empty";
     private static final String CONTINUE_SHOPPING_TEXT = "Continue shopping";
