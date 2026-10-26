@@ -1,35 +1,42 @@
 [
   {
     "name": "Ignored tests",
+    "description": "Tests skipped or disabled on purpose. Check the @Disabled reason or the assumption that skipped the test, and re-enable it if the blocker is gone.",
     "matchedStatuses": ["skipped"]
   },
   {
     "name": "Visual regression mismatch (layout changed)",
+    "description": "The page screenshot differs from the stored baseline. Compare the actual, expected and diff images in the report; if the change is intended, regenerate the baseline in Docker so fonts and rendering match CI.",
     "matchedStatuses": ["failed", "broken"],
     "messageRegex": "(?s).*Visual regression check.*"
   },
   {
     "name": "Product defects (assertion failed)",
+    "description": "An assertion did not hold, so the application behaved differently than expected. Compare the expected and actual values in the message and confirm whether it is a real defect or an outdated expectation.",
     "matchedStatuses": ["failed"],
     "messageRegex": "(?s).*(AssertionFailedError|AssertionError|Locator expected|Page expected|expected.*but).*"
   },
   {
     "name": "Ambiguous locator (strict mode violation)",
+    "description": "A locator matched several elements while exactly one was required. Scope or narrow the locator (parent container, role name, nth or filter) so it resolves to a single element.",
     "matchedStatuses": ["failed", "broken"],
     "messageRegex": "(?s).*strict mode violation.*"
   },
   {
     "name": "Navigation / network problems",
+    "description": "The page or browser could not load a URL, or it was closed mid-test. Check the base URL, DNS and connectivity, and whether the site blocks automated traffic; also look for a test closing the page or context too early.",
     "matchedStatuses": ["failed", "broken"],
-    "messageRegex": "(?s).*(net::ERR|Page closed|Target closed|Target page, context or browser has been closed|Navigation failed).*"
+    "messageRegex": "(?s).*(net::ERR|NS_ERROR_|Page closed|Target closed|Target page, context or browser has been closed|Navigation failed).*"
   },
   {
     "name": "Element not found / timeout waiting for action",
+    "description": "Playwright timed out waiting for an element or action. Check the call log in the message: the locator may be wrong, the element hidden, covered or disabled, or the page too slow; fix the locator or wait condition before raising timeouts.",
     "matchedStatuses": ["failed", "broken"],
     "messageRegex": "(?s).*(TimeoutError|Timeout \\d+ms exceeded).*"
   },
   {
     "name": "Test infrastructure problems",
+    "description": "Any other broken test, usually an unexpected exception in setup, teardown or test code rather than a product issue. Check the stack trace for configuration, browser launch or resource problems.",
     "matchedStatuses": ["broken"]
   }
 ]
