@@ -6,6 +6,7 @@ import com.github.magdalena.page.pom.CartPage;
 import com.github.magdalena.page.pom.ColorSelectionPage;
 import com.github.magdalena.page.pom.HomePage;
 import com.github.magdalena.page.pom.SearchResultsPage;
+import com.github.magdalena.support.OfflineSite;
 import com.github.magdalena.support.PlaywrightConfig;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -42,12 +43,23 @@ public class CucumberContext {
     private SearchResultsPage searchResultsPage;
     private AlertComponent alertComponent;
     private Page visualizerTab;
+    private boolean offline;
+    private OfflineSite offlineSite;
 
     public void initBrowser() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions().setHeadless(PlaywrightConfig.isHeadless())
         );
+    }
+
+    /** Serves the site from local stubs for the rest of the scenario; call before choosing a viewport. */
+    public void goOffline() {
+        offline = true;
+    }
+
+    public OfflineSite offlineSite() {
+        return offlineSite;
     }
 
     public void useViewport(String viewport) {
@@ -239,6 +251,8 @@ public class CucumberContext {
         }
 
         context = browser.newContext(new Browser.NewContextOptions().setViewportSize(width, height));
+        // Routes must exist before the page's first navigation.
+        offlineSite = offline ? new OfflineSite(context) : null;
         page = context.newPage();
         recordBrowserDiagnostics();
         homePage = new HomePage(page);

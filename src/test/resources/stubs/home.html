@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Stub home</title></head>
+<body>
+<nav>
+  <button type="button">Search</button>
+  <form action="/en/search-results" method="get">
+    <input type="text" name="search" aria-label="search-field">
+  </form>
+</nav>
+<div id="onetrust-banner-sdk">
+  <button id="onetrust-reject-all-handler" type="button">Reject All</button>
+</div>
+<script>
+  document.getElementById('onetrust-reject-all-handler').addEventListener('click', function () {
+    document.getElementById('onetrust-banner-sdk').style.display = 'none';
+  });
+</script>
+</body>
+</html>

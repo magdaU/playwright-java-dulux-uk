@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Stub basket with one tester</title></head>
+<body>
+<main>
+  <div id="item">
+    <div role="group" aria-label="Quantity">
+      <button id="decrease" type="button" aria-label="Decrease quantity" disabled>-</button>
+      <input id="quantity" type="number" aria-label="Quantity input" value="1" min="1">
+      <button id="increase" type="button" aria-label="Increase quantity">+</button>
+    </div>
+    <button id="remove" type="button">Remove</button>
+  </div>
+  <p id="empty" hidden>Your basket is empty</p>
+</main>
+<script>
+  var quantity = document.getElementById('quantity');
+  var decrease = document.getElementById('decrease');
+  function setQuantity(value) {
+    quantity.value = value;
+    decrease.disabled = value <= 1;
+  }
+  document.getElementById('increase').addEventListener('click', function () {
+    setQuantity(Number(quantity.value) + 1);
+  });
+  decrease.addEventListener('click', function () {
+    setQuantity(Number(quantity.value) - 1);
+  });
+  document.getElementById('remove').addEventListener('click', function () {
+    document.getElementById('item').remove();
+    document.getElementById('empty').hidden = false;
+  });
+</script>
+</body>
+</html>
