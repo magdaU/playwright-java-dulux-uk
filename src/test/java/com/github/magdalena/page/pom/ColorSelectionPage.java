@@ -30,12 +30,8 @@ public class ColorSelectionPage extends BasePage {
         buttonByName(name).click();
     }
 
-    private Locator buttonByName(String name) {
-        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(name));
-    }
-
     public void buyATesterColour() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(BUY_A_TESTER_TEXT)).click();
+        buttonByName(BUY_A_TESTER_TEXT).click();
     }
 
     public void openVisualizerApp() {

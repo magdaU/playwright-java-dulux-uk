@@ -7,7 +7,7 @@ import com.microsoft.playwright.options.AriaRole;
 
 public class CartPage extends BasePage {
 
-    private static final String CART_PAGE_URL = "https://www.dulux.co.uk/en/store/cart";
+    private static final String CART_PAGE_URL = BASE_URL + "/en/store/cart";
     private static final String QUANTITY_INPUT_LABEL = "Quantity input";
     private static final String YOUR_BASKET_IS_EMPTY_TEXT = "Your basket is empty";
     private static final String CONTINUE_SHOPPING_TEXT = "Continue shopping";
@@ -20,7 +20,7 @@ public class CartPage extends BasePage {
         super(page);
     }
 
-    public void openCartPage () {
+    public void openCartPage() {
         page.navigate(CART_PAGE_URL);
     }
 
@@ -45,11 +45,11 @@ public class CartPage extends BasePage {
     }
 
     public Locator getDecreaseQuantityButton() {
-        return page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(DECREASE_QUANTITY));
+        return buttonByName(DECREASE_QUANTITY);
     }
 
     public void increaseQuantity() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(INCREASE_QUANTITY)).click();
+        buttonByName(INCREASE_QUANTITY).click();
     }
 
     public void decreaseQuantity() {

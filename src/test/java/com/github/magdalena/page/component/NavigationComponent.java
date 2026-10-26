@@ -18,7 +18,7 @@ public class NavigationComponent extends BasePage {
     }
 
     public void clickDropdownFindColour() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(FIND_A_COLOUR_MENU_ITEM)).click();
+        buttonByName(FIND_A_COLOUR_MENU_ITEM).click();
         // The button triggers a page navigation (not a dropdown). Wait for the new
         // page to load before proceeding — without this, the next click resolves
         // against the outgoing page and hits a stale element.
@@ -26,7 +26,7 @@ public class NavigationComponent extends BasePage {
     }
 
     public void clickDropdownHamburgerMenu() {
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(MENU_HAMBURGER)).click();
+        buttonByName(MENU_HAMBURGER).click();
     }
 
     public void clickFindColour() {
@@ -37,14 +37,15 @@ public class NavigationComponent extends BasePage {
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(SHOPPING_CART)).click();
     }
 
-    public void searchClickOnPage(){
+    public void searchClickOnPage() {
         // The search results page also has a "Search" submit button, so scope to the header nav.
         page.getByRole(AriaRole.NAVIGATION)
                 .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(SEARCH_BUTTON)).click();
     }
 
-    public void inputColorOnSearchBoxAndEnter(String color){
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName(SEARCH_FIELD)).fill(color);
-        page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName(SEARCH_FIELD)).press("Enter");
+    public void inputColorOnSearchBoxAndEnter(String color) {
+        Locator searchBox = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName(SEARCH_FIELD));
+        searchBox.fill(color);
+        searchBox.press("Enter");
     }
 }
