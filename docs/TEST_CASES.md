@@ -6,7 +6,8 @@
 > documented as **manual/candidate** cases that close gaps identified in
 > [Test Strategy §14](TEST_STRATEGY.md#14-coverage-gaps--improvement-opportunities) but
 > aren't automated today. See the [Features Guide](FEATURES_GUIDE.md) for what each area
-> under test actually does.
+> under test actually does. TC-27 – TC-34 are the offline (`@offline`) scenarios that run
+> against local stub pages.
 
 **Legend — Priority:** P1 critical path · P2 important · P3 nice-to-have.
 **Legend — Automation:** ✅ automated (linked) · 🟡 candidate for automation · ⚪ manual/exploratory only.
@@ -202,6 +203,95 @@
 | **Automation** | ✅ `PlaywrightConfigTest` |
 | **Expected result** | "true" enables headless; a non-boolean value falls back to headed |
 | **Production load** | None |
+
+---
+
+## Offline stubbed checks
+
+These scenarios are tagged `@offline`: an `OfflineSite` route handler serves the pages from
+[`src/test/resources/stubs/`](../src/test/resources/stubs) so nothing reaches the live site
+(see [Architecture](architecture.md)). They are not tagged `@smoke`, so the default CI run
+does not execute them; run them with `-Dcucumber.filter.tags=@offline`.
+
+### TC-27 — Stubbed basket enforces the quantity minimum
+| | |
+|---|---|
+| **Priority** | P3 · `@boundary` |
+| **ISTQB technique** | Boundary value analysis — quantity minimum is 1, decrease guarded at 1 |
+| **Automation** | ✅ [`offline_storefront.feature` — Scenario 1](../src/test/resources/features/offline_storefront.feature) |
+| **Steps** | Basket with one tester: increase to 2, decrease back to 1 |
+| **Expected result** | At 1 the decrease control is disabled; quantity is 2 after increase and 1 after decrease |
+| **Production load** | None — served from local stubs |
+
+### TC-28 — Stubbed basket: removing the only tester empties it
+| | |
+|---|---|
+| **Priority** | P3 · `@state-transition` |
+| **ISTQB technique** | State transition — one item → empty |
+| **Automation** | ✅ [`offline_storefront.feature` — Scenario 2](../src/test/resources/features/offline_storefront.feature) |
+| **Steps** | Basket with one tester: remove the tester |
+| **Expected result** | The empty-basket message is shown |
+| **Production load** | None — served from local stubs |
+
+### TC-29 — Stubbed basket: tester removed after the quantity was increased
+| | |
+|---|---|
+| **Priority** | P3 · `@state-transition` |
+| **ISTQB technique** | State transition — one item → two items → empty |
+| **Automation** | ✅ [`offline_storefront.feature` — Scenario 3](../src/test/resources/features/offline_storefront.feature) |
+| **Steps** | Basket with one tester: increase quantity to 2, remove the tester |
+| **Expected result** | Quantity shows 2 after the increase; the empty-basket message is shown after removal |
+| **Production load** | None — served from local stubs |
+
+### TC-30 — Stubbed search for a term made only of symbols
+| | |
+|---|---|
+| **Priority** | P3 · `@negative` |
+| **ISTQB technique** | Negative testing — symbol-only input |
+| **Automation** | ✅ [`offline_storefront.feature` — Scenario 4](../src/test/resources/features/offline_storefront.feature) |
+| **Steps** | Open the home page, search for `%$#@!` |
+| **Expected result** | The results page is shown for the term with the "no results found" message |
+| **Production load** | None — served from local stubs |
+
+### TC-31 — Unrecognised headless setting opens a visible browser
+| | |
+|---|---|
+| **Priority** | P3 · `@negative` `@headless-setting` |
+| **ISTQB technique** | Equivalence partitioning — invalid partitions ("yes" and an empty value) |
+| **Automation** | ✅ [`offline_configuration.feature` — Scenario Outline](../src/test/resources/features/offline_configuration.feature) |
+| **Steps** | Set the headless setting to each example value |
+| **Expected result** | The browser runs in headed mode |
+| **Production load** | None — served from local stubs |
+
+### TC-32 — Upper case headless setting runs the browser headless
+| | |
+|---|---|
+| **Priority** | P3 · `@equivalence` `@headless-setting` |
+| **ISTQB technique** | Equivalence partitioning — valid partition, case insensitive ("TRUE") |
+| **Automation** | ✅ [`offline_configuration.feature` — Scenario 2](../src/test/resources/features/offline_configuration.feature) |
+| **Steps** | Set the headless setting to "TRUE" |
+| **Expected result** | The browser runs in headless mode |
+| **Production load** | None — served from local stubs |
+
+### TC-33 — Screenshot is judged against the changed-pixel allowance
+| | |
+|---|---|
+| **Priority** | P3 · `@boundary` `@visual-comparison` |
+| **ISTQB technique** | Boundary value analysis — 199, 200 and 201 changed pixels of a 200 × 200 baseline (allowance 200 px) |
+| **Automation** | ✅ [`offline_visual_comparison.feature` — Scenario Outline](../src/test/resources/features/offline_visual_comparison.feature) |
+| **Steps** | Compare a same-size screenshot with each example's number of changed pixels |
+| **Expected result** | 199 and 200 match the baseline; 201 is rejected as a visual regression |
+| **Production load** | None — served from local stubs |
+
+### TC-34 — Screenshot of a different size is rejected
+| | |
+|---|---|
+| **Priority** | P3 · `@negative` `@visual-comparison` |
+| **ISTQB technique** | Negative testing — size mismatch |
+| **Automation** | ✅ [`offline_visual_comparison.feature` — Scenario 2](../src/test/resources/features/offline_visual_comparison.feature) |
+| **Steps** | Compare a 200 × 201 screenshot with a 200 × 200 baseline |
+| **Expected result** | Rejected as a visual regression |
+| **Production load** | None — served from local stubs |
 
 ---
 

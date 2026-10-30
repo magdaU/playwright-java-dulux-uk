@@ -23,6 +23,15 @@ Feature: Storefront behaviour on a stubbed site
     When the customer removes the tester from the basket
     Then the basket is empty
 
+  # ISTQB: state transition (one item -> two items -> empty)
+  @state-transition @desktop
+  Scenario: Customer removes the tester after increasing the quantity
+    Given a desktop customer has one tester in the basket
+    When the customer increases the quantity
+    Then the quantity is 2
+    When the customer removes the tester from the basket
+    Then the basket is empty
+
   # ISTQB: negative testing - input made of symbols only
   @negative @desktop
   Scenario: Customer searches for a term made only of symbols
