@@ -184,8 +184,8 @@ case states its production load.
 
 | Environment | Where | Purpose |
 |---|---|---|
-| **Local (headed)** | Developer machine, `headless=false` by default | Authoring and debugging — watch the journey run |
-| **Local (headless)** | `-Dheadless=true` | Fast local verification before pushing |
+| **Local (headed)** | Developer machine, `-Dheadless=false` | Authoring and debugging — watch the journey run |
+| **Local (headless)** | Developer machine, `headless=true` by default | Fast local verification before pushing |
 | **Docker** | `docker compose up --build` | Reproducible run matching CI exactly (Java 25 + Chromium, `shm_size: 1gb`) |
 | **CI** | GitHub Actions `ubuntu-latest`, headless | Gate on every push/PR; publishes the Allure report |
 

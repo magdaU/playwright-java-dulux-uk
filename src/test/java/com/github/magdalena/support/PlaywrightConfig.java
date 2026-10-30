@@ -2,7 +2,7 @@ package com.github.magdalena.support;
 
 public final class PlaywrightConfig {
 
-    private static final String DEFAULT_HEADLESS = "false";
+    private static final String DEFAULT_HEADLESS = "true";
 
     private PlaywrightConfig() {
     }
