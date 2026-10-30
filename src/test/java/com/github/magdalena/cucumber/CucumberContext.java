@@ -1,18 +1,13 @@
 package com.github.magdalena.cucumber;
 
-import com.github.magdalena.page.component.AlertComponent;
-import com.github.magdalena.page.component.NavigationComponent;
 import com.github.magdalena.page.pom.CartPage;
 import com.github.magdalena.page.pom.ColorSelectionPage;
 import com.github.magdalena.page.pom.HomePage;
 import com.github.magdalena.page.pom.SearchResultsPage;
+import com.github.magdalena.support.BrowserSession;
 import com.github.magdalena.support.OfflineSite;
-import com.github.magdalena.support.PlaywrightConfig;
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.BrowserType;
+import com.github.magdalena.support.Viewport;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,37 +15,18 @@ import java.util.List;
 
 public class CucumberContext {
 
-    private static final int DESKTOP_WIDTH = 1920;
-    private static final int DESKTOP_HEIGHT = 1080;
-    private static final int MOBILE_WIDTH = 375;
-    private static final int MOBILE_HEIGHT = 667;
-
     private static final int MAX_DIAGNOSTIC_ENTRIES = 20;
 
     private final List<String> consoleErrors = Collections.synchronizedList(new ArrayList<>());
     private final List<String> failedResponses = Collections.synchronizedList(new ArrayList<>());
 
-    private Playwright playwright;
-    private Browser browser;
-    private BrowserContext context;
-    private Page page;
-    private boolean desktop;
-
-    private HomePage homePage;
-    private NavigationComponent navigationPage;
-    private ColorSelectionPage colorSelectionPage;
-    private CartPage cartPage;
-    private SearchResultsPage searchResultsPage;
-    private AlertComponent alertComponent;
+    private BrowserSession session;
     private Page visualizerTab;
     private boolean offline;
     private OfflineSite offlineSite;
 
     public void initBrowser() {
-        playwright = Playwright.create();
-        browser = playwright.chromium().launch(
-                new BrowserType.LaunchOptions().setHeadless(PlaywrightConfig.isHeadless())
-        );
+        session = new BrowserSession();
     }
 
     /** Serves the site from local stubs for the rest of the scenario; call before choosing a viewport. */
@@ -63,71 +39,68 @@ public class CucumberContext {
     }
 
     public void useViewport(String viewport) {
-        if ("mobile".equalsIgnoreCase(viewport)) {
-            initContext(MOBILE_WIDTH, MOBILE_HEIGHT);
-            desktop = false;
-            return;
-        }
-
-        initContext(DESKTOP_WIDTH, DESKTOP_HEIGHT);
-        desktop = true;
+        // Routes must exist before the page's first navigation.
+        session.open(Viewport.fromName(viewport),
+                context -> offlineSite = offline ? new OfflineSite(context) : null);
+        recordBrowserDiagnostics();
+        visualizerTab = null;
     }
 
     public void openEmptyCart() {
-        cartPage.openCartPage();
-        homePage.rejectAllCookies();
+        session.cartPage().openCartPage();
+        session.homePage().rejectAllCookies();
     }
 
     public void openHomePage() {
-        homePage.openHomePage();
+        session.homePage().openHomePage();
     }
 
     public void openHomePageAndRejectCookies() {
-        homePage.openHomePage();
-        homePage.rejectAllCookies();
+        session.homePage().openHomePage();
+        session.homePage().rejectAllCookies();
     }
 
     public void browseToShade(String colourFamily, String shade, boolean mobileNavigation) {
         openHomePage();
         openColourFinder(mobileNavigation);
-        colorSelectionPage.chooseColour(colourFamily);
-        colorSelectionPage.chooseShade(shade);
+        session.colorSelectionPage().chooseColour(colourFamily);
+        session.colorSelectionPage().chooseShade(shade);
     }
 
     public void openColourFinder(boolean mobileNavigation) {
         if (mobileNavigation) {
-            navigationPage.clickDropdownHamburgerMenu();
+            session.navigationPage().clickDropdownHamburgerMenu();
         }
 
-        navigationPage.clickDropdownFindColour();
-        navigationPage.clickFindColour();
+        session.navigationPage().clickDropdownFindColour();
+        session.navigationPage().clickFindColour();
     }
 
     public ColorSelectionPage colorSelectionPage() {
-        return colorSelectionPage;
+        return session.colorSelectionPage();
     }
 
     public void searchForShade(String shade) {
-        navigationPage.searchClickOnPage();
-        navigationPage.inputColorOnSearchBoxAndEnter(shade);
+        session.navigationPage().searchClickOnPage();
+        session.navigationPage().inputColorOnSearchBoxAndEnter(shade);
     }
 
     public void addTesterToBasket() {
-        colorSelectionPage.buyATesterColour();
-        alertComponent.closeAlert();
+        session.colorSelectionPage().buyATesterColour();
+        session.alertComponent().closeAlert();
     }
 
     public void openShoppingCart() {
-        navigationPage.openShoppingCart();
+        session.navigationPage().openShoppingCart();
     }
 
     public void openVisualizerExperience() {
-        if (desktop) {
-            visualizerTab = context.waitForPage(colorSelectionPage::openVisualizerApp);
+        if (isDesktop()) {
+            visualizerTab = session.context().waitForPage(session.colorSelectionPage()::openVisualizerApp);
             return;
         }
 
-        colorSelectionPage.openVisualizerApp();
+        session.colorSelectionPage().openVisualizerApp();
     }
 
     /**
@@ -135,14 +108,15 @@ public class CucumberContext {
      * Allure report so the failure reason is visible without re-running the test.
      */
     public String describeFailureContext() {
-        if (page == null || page.isClosed()) {
+        if (!hasOpenPage()) {
             return "Browser page was not available.";
         }
 
+        Page page = session.page();
         StringBuilder sb = new StringBuilder()
                 .append("URL: ").append(page.url()).append('\n')
                 .append("Title: ").append(page.title()).append('\n')
-                .append("Viewport: ").append(desktop ? "desktop" : "mobile").append('\n');
+                .append("Viewport: ").append(isDesktop() ? "desktop" : "mobile").append('\n');
         appendSection(sb, "Console errors", consoleErrors);
         appendSection(sb, "Failed or error HTTP responses", failedResponses);
         return sb.toString();
@@ -161,6 +135,7 @@ public class CucumberContext {
     }
 
     private void recordBrowserDiagnostics() {
+        Page page = session.page();
         consoleErrors.clear();
         failedResponses.clear();
         page.onConsoleMessage(message -> {
@@ -199,27 +174,27 @@ public class CucumberContext {
     }
 
     public byte[] takeScreenshot() {
-        if (page == null || page.isClosed()) {
+        if (!hasOpenPage()) {
             return new byte[0];
         }
 
-        return page.screenshot(new Page.ScreenshotOptions().setFullPage(true));
+        return session.page().screenshot(new Page.ScreenshotOptions().setFullPage(true));
     }
 
     public CartPage cartPage() {
-        return cartPage;
+        return session.cartPage();
     }
 
     public HomePage homePage() {
-        return homePage;
+        return session.homePage();
     }
 
     public SearchResultsPage searchResultsPage() {
-        return searchResultsPage;
+        return session.searchResultsPage();
     }
 
     public Page page() {
-        return page;
+        return session.page();
     }
 
     public Page visualizerTab() {
@@ -227,40 +202,17 @@ public class CucumberContext {
     }
 
     public boolean isDesktop() {
-        return desktop;
+        return session != null && session.viewport() == Viewport.DESKTOP;
     }
 
     public void tearDown() {
-        if (context != null) {
-            context.close();
-            context = null;
-        }
-        if (browser != null) {
-            browser.close();
-            browser = null;
-        }
-        if (playwright != null) {
-            playwright.close();
-            playwright = null;
+        if (session != null) {
+            session.close();
+            session = null;
         }
     }
 
-    private void initContext(int width, int height) {
-        if (context != null) {
-            context.close();
-        }
-
-        context = browser.newContext(new Browser.NewContextOptions().setViewportSize(width, height));
-        // Routes must exist before the page's first navigation.
-        offlineSite = offline ? new OfflineSite(context) : null;
-        page = context.newPage();
-        recordBrowserDiagnostics();
-        homePage = new HomePage(page);
-        navigationPage = new NavigationComponent(page);
-        colorSelectionPage = new ColorSelectionPage(page);
-        cartPage = new CartPage(page);
-        searchResultsPage = new SearchResultsPage(page);
-        alertComponent = new AlertComponent(page);
-        visualizerTab = null;
+    private boolean hasOpenPage() {
+        return session != null && session.hasOpenPage();
     }
 }

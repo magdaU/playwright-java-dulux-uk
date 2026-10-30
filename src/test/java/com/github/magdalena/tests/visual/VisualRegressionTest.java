@@ -1,6 +1,5 @@
 package com.github.magdalena.tests.visual;
 
-import com.github.magdalena.page.pom.CartPage;
 import com.github.magdalena.support.VisualComparisonUtil;
 import com.github.magdalena.tests.BaseTest;
 import com.microsoft.playwright.Page;
@@ -32,14 +31,6 @@ public class VisualRegressionTest extends BaseTest {
     // ScreenshotAnimations.DISABLED forces transitions to their end state first.
     private static final Page.ScreenshotOptions NO_ANIMATIONS =
             new Page.ScreenshotOptions().setAnimations(ScreenshotAnimations.DISABLED);
-
-    private CartPage cartPage;
-
-    @Override
-    protected void createSetup(int width, int height) {
-        super.createSetup(width, height);
-        cartPage = new CartPage(page);
-    }
 
     @Test
     @Story("Cart page appearance")

@@ -13,8 +13,6 @@ import io.qameta.allure.Story;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.github.magdalena.page.component.AlertComponent;
-import com.github.magdalena.page.pom.CartPage;
 import com.github.magdalena.tests.BaseTest;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -23,16 +21,6 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @Feature("Tester Purchase")
 @Owner("Magdalena")
 public class TesterProductTest extends BaseTest {
-
-    private CartPage cartPage;
-    private AlertComponent alertComponent;
-
-    @Override
-    protected void createSetup(int width, int height) {
-        super.createSetup(width, height);
-        cartPage = new CartPage(page);
-        alertComponent = new AlertComponent(page);
-    }
 
     @Test
     @Story("Add tester to cart – Desktop")
