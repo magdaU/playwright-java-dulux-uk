@@ -15,7 +15,7 @@
 | **Framework** | Playwright for Java · Cucumber BDD · JUnit 5 · Allure |
 | **Pipeline** | GitHub Actions → smoke suite on every push/PR, report published to GitHub Pages |
 | **Owner** | QA / SDET |
-| **Status** | Implemented and passing in CI — 4 Cucumber scenarios (desktop + mobile `purchase`, desktop + mobile `visualizer`) plus 3 non-blocking visual regression checks. A [Python port](https://github.com/magdaU/playwright-python-dulux-uk) of this same suite exists as an independent second implementation against the same site. |
+| **Status** | Implemented — the blocking CI gate runs the `@smoke` Cucumber scenarios, a non-blocking job runs the 3 visual regression checks, and `@offline` stubbed scenarios and JUnit unit tests run on demand (see [`features/`](../src/test/resources/features) for the full scenario list). A [Python port](https://github.com/magdaU/playwright-python-dulux-uk) of this same suite exists as an independent second implementation against the same site. |
 
 ---
 
@@ -65,14 +65,19 @@ Characteristics that shape the test design:
 | **Tester purchase** | Browse to a shade via the colour finder and add a tester to the basket (desktop + mobile) |
 | **Visualizer experience** | Open the Visualizer from a selected shade page (desktop opens a new tab; mobile surfaces the store-data message) |
 | **Cross-viewport** | Every journey runs at desktop `1920×1080` and mobile `375×667` |
-| **Cookie consent** | Implicitly exercised — every journey rejects cookies before proceeding |
+| **Cookie consent** | Rejecting all cookies ([`cookie_consent.feature`](../src/test/resources/features/cookie_consent.feature)); also exercised implicitly — every journey rejects cookies before proceeding |
+| **Site search** | Search for an existing shade and for a non-existent one (TC-13, TC-14) |
+| **Basket management** | Removing the only item, the quantity minimum, and continuing shopping from an empty basket (TC-17, TC-18) |
+| **Colour finder** | Opening the colour finder on desktop and mobile (TC-26) |
+| **Offline stubbed checks** | `@offline` scenarios against local stub pages — basket quantity and removal, symbol-only search, headless setting, visual comparison threshold (TC-27 – TC-34, see §5) |
 
 ### ❌ Out of scope (for this suite)
 
 - Checkout, payment and order fulfilment (no transactions against production).
 - Account creation, login and profile management.
-- API / service-level, contract, unit and component testing (the app is third-party; we
-  own no production code to unit-test).
+- API / service-level and contract testing (the app is third-party and exposes no API we
+  may test). Unit-level checks exist only for the framework's own support code
+  (`PlaywrightConfigTest`, `VisualComparisonUtilBoundaryTest`, `PageUrlTest`).
 - Performance, load and stress testing.
 - Accessibility (a11y) and full cross-browser matrix — **candidates for the roadmap (§13)**.
 
@@ -104,10 +109,11 @@ alternative). See [Architecture](architecture.md) for how it's wired.
 > difference is the accepted trade-off (early coverage with occasional baseline-refresh
 > noise, vs. no coverage until the site looks stable) — see [Lessons Learned](LESSONS_LEARNED.md#4-visual-regression-implemented-here-deferred-in-the-python-sibling).
 
-> **Note on the test pyramid.** This repository is intentionally an **E2E layer only**,
-> because we do not own the application code. We compensate for the known cost of E2E
-> (slower, more brittle) by keeping the suite small, journey-focused, and tag-sliced so the
-> critical `@smoke` set stays fast.
+> **Note on the test pyramid.** The suite is predominantly an **E2E layer**, because we do
+> not own the application code. Below it sit two small layers for code we do own: offline
+> scenarios (`@offline`, run against local stub pages) and JUnit unit tests of the support
+> code. We compensate for the known cost of E2E (slower, more brittle) by keeping the live
+> suite small, journey-focused, and tag-sliced so the critical `@smoke` set stays fast.
 
 ---
 
@@ -119,8 +125,8 @@ alternative). See [Architecture](architecture.md) for how it's wired.
   (`*.feature`) so intent is reviewable by non-engineers. Cucumber step definitions are the
   glue; the [`CucumberRunner`](../src/test/java/com/github/magdalena/cucumber/CucumberRunner.java)
   drives them via the JUnit Platform.
-- **Parallel JUnit tests** — the same journeys also exist as plain JUnit 5 tests
-  (`TesterProductTest`, `VisualizerAppTest`) annotated with rich Allure metadata
+- **Parallel JUnit tests** — the purchase and Visualizer journeys also exist as plain JUnit 5 tests
+  (`TesterProductTest`, `VisualizerAppTest`), plus `VisualRegressionTest` for the pixel-diff checks, annotated with rich Allure metadata
   (`@Epic`, `@Feature`, `@Story`, `@Severity`). This gives two entry points: BDD for
   living documentation, JUnit for fine-grained Allure storytelling.
 
@@ -137,8 +143,9 @@ alternative). See [Architecture](architecture.md) for how it's wired.
 ### 4.3 Test design techniques
 
 - **Scenario / user-journey based** — each test mirrors a real customer task end to end.
-- **Equivalence partitioning** — one representative shade (`Violet Morning` / `Violet`)
-  stands in for the colour-finder space; the *flow*, not the data permutation, is the risk.
+- **Equivalence partitioning** — in the purchase journey, one representative shade
+  (`Violet Morning` / `Violet`) stands in for the colour-finder space; the *flow*, not the
+  data permutation, is the risk.
 - **State verification** — basket starts empty → exactly 1 item with the right product and
   shade after adding (guards against silent over/under-counting).
 - **Cross-configuration testing** — desktop vs. mobile as distinct navigation paths.
@@ -167,6 +174,9 @@ case states its production load.
   so runs never contaminate one another.
 - **Self-cleaning** — because no order is placed and contexts are disposed after every
   scenario, there is no teardown/data-reset burden.
+- **Offline scenarios** (`@offline`) use stub pages from `src/test/resources/stubs/`, served
+  by `OfflineSite` for every request in the browser context; other hosts are aborted, so no
+  traffic reaches the live site.
 
 ---
 
@@ -211,7 +221,11 @@ Tags are the contract between "what changed" and "what we run":
 | `@regression` | Full journey coverage | On demand / scheduled / pre-release |
 | `@desktop` | Desktop-viewport variant | Filtered as needed |
 | `@mobile` | Mobile-viewport variant | Filtered as needed |
-| `@purchase`, `@visualizer` | Feature grouping | Targeted debugging of one journey |
+| `@purchase`, `@visualizer`, `@basket`, `@search`, `@colour-finder`, `@cookies` | Feature grouping (feature-level tags on the live scenarios) | Targeted debugging of one journey |
+| `@offline` | Scenario runs against local stub pages, no network | On demand: `-Dcucumber.filter.tags=@offline`; not in the default CI `@smoke` run |
+| `@storefront`, `@configuration`, `@visual` (Cucumber) | Feature grouping for the `@offline` feature files (stubbed storefront, headless setting, visual comparison threshold) | Combine with `@offline` to slice |
+| `@negative`, `@boundary`, `@equivalence`, `@state-transition` | ISTQB technique of the scenario | Filtering by technique |
+| `@headless-setting`, `@visual-comparison` | Grouping by the behaviour under test in the offline configuration / visual comparison features | Targeted debugging |
 | `@visual` (JUnit `@Tag`, not a Cucumber tag) | Pixel-diff checks | Own non-blocking CI job, run standalone with `-Dtest=VisualRegressionTest` |
 
 Selection is driven by `-Dcucumber.filter.tags=...` (CI defaults to `@smoke`, overridable
@@ -303,8 +317,18 @@ improvements, roughly in priority order:
 - [x] **Harden the basket quantity locator** — fixed 2026-09-04, the same day it was
   flagged, once the risk materialised for real. See §10 ("Basket markup drift") and
   [Lessons Learned #6](LESSONS_LEARNED.md#6-basket-markup-drift-materialised-here-too).
+- [x] **Site search** — existing (TC-13) and non-existent (TC-14) shade, see
+  [`search.feature`](../src/test/resources/features/search.feature).
+- [x] **Basket edit/remove** — removing the only item (TC-17) and the quantity minimum
+  (TC-18), see [`basket.feature`](../src/test/resources/features/basket.feature).
+- [x] **Offline negative and boundary scenarios** — stubbed storefront, headless setting and
+  visual comparison threshold (TC-27 – TC-34), see
+  [`offline_storefront.feature`](../src/test/resources/features/offline_storefront.feature),
+  [`offline_configuration.feature`](../src/test/resources/features/offline_configuration.feature) and
+  [`offline_visual_comparison.feature`](../src/test/resources/features/offline_visual_comparison.feature).
 - [ ] **Cross-browser** — add Firefox and WebKit projects to widen real coverage.
 - [ ] **Accessibility checks** — integrate an a11y scan into the critical journeys.
+- [ ] **Parallel test execution** — run scenarios concurrently to shorten the suite.
 - [ ] **Tablet viewport** — a third breakpoint between mobile and desktop.
 - [ ] **Retry policy for known-flaky steps** — bounded, explicit, and reported (never silent).
 - [ ] **Scheduled regression run** — nightly `@regression` against production to catch drift.
@@ -314,16 +338,17 @@ improvements, roughly in priority order:
 
 ## 14. Coverage gaps & improvement opportunities
 
-Areas deliberately left untested today (§3), plus what the risk actually is if they stay
-uncovered and a concrete way each could be tested — not just a note that it's "future work".
+Areas not covered today, plus what the risk actually is if they stay uncovered and a
+concrete way each could be tested — not just a note that it's "future work". Rows marked
+covered are kept for traceability.
 
 | Area | Risk if left untested | How it could be tested | Priority |
 |---|---|---|---|
 | **Checkout / payment / order fulfilment** | A broken checkout ships unnoticed until a customer complaint or a revenue drop is reported — the single biggest gap given this is an e-commerce site | Not against production (no real transactions). Would need a retailer-provided staging/sandbox environment with a test payment provider before this is testable at all | High — blocked on environment access, not effort |
 | **Only one colour family / shade path exercised** (`Violet` / "Violet Morning") | A shade with no tester option, or a family with an unusual layout, could break the flow without being caught — this project's *previous* pinned shade ("Gentle Lavender") was in fact removed from the catalogue (§10) | Turn the purchase scenario into a Scenario Outline with 2-3 more family/shade pairs, including an edge case | Medium |
-| **Basket edit/remove flows** | Only *adding* a tester is verified; incrementing/decrementing quantity or removing an item is unverified | Extend `CartPage` with increment/decrement/remove actions and add a `@regression`-tagged scenario asserting basket state after each | Medium |
-| **Site search** | `NavigationComponent` exposes `searchClickOnPage()`/`inputColorOnSearchBoxAndEnter()` and it's exercised as setup for the Visualizer scenarios, but no scenario asserts search *itself* works for an arbitrary term | Add a scenario: search for a known shade, assert it navigates to that shade's detail page | Low–Medium |
-| **Negative / error-state paths** (e.g. a failed add-to-basket request) | The suite only proves the happy path; a customer-visible error state is invisible to it today | Use Playwright's `page.route()` to intercept and force an error response on the add-to-basket call, then assert the UI surfaces it | Medium |
+| **Basket edit/remove flows** | ~~Only adding was verified~~ | **Covered** — TC-17, TC-18 ([`basket.feature`](../src/test/resources/features/basket.feature)) | Covered |
+| **Site search** | ~~Search itself was not asserted~~ | **Covered** — TC-13, TC-14 ([`search.feature`](../src/test/resources/features/search.feature)) | Covered |
+| **Failed add-to-basket response** (TC-09) | A customer-visible error state for a failed add-to-basket request is invisible to the suite; other negative paths are covered (TC-14, TC-30, TC-31, TC-34) | Use Playwright's `page.route()` to intercept and force an error response on the add-to-basket call, then assert the UI surfaces it | Medium |
 | **Full cross-browser coverage on every push** | A Firefox/WebKit-only regression ships on `main` undetected until someone runs the suite manually against another engine | Deliberate trade-off to protect push/PR speed (§10, single-browser risk). If it becomes a real problem, add the two `@smoke` scenarios to a small WebKit job rather than the whole suite | Low (accepted trade-off) |
 | **API / contract-level testing** | None today — a backend contract change could break the UI with only this slow, browser-driven E2E layer to catch it | Not currently actionable: Dulux is a third-party site exposing no API we're entitled to test against | Not planned |
 | **Performance / load** | A slow-loading shade page degrades conversion without failing any functional assertion here | Out of scope for a UI E2E suite by design; would need a dedicated tool (Lighthouse CI, k6) against a staging environment | Not planned |

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Stub empty basket</title></head>
+<body>
+<main>
+  <p>Your basket is empty</p>
+</main>
+<div id="onetrust-banner-sdk">
+  <button id="onetrust-reject-all-handler" type="button">Reject All</button>
+</div>
+<script>
+  document.getElementById('onetrust-reject-all-handler').addEventListener('click', function () {
+    document.getElementById('onetrust-banner-sdk').style.display = 'none';
+  });
+</script>
+</body>
+</html>

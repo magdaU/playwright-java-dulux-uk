@@ -27,6 +27,12 @@ acted on.
 - Tester purchase journey — desktop, mobile (TC-01, TC-02).
 - Visualizer journey — desktop, mobile (TC-03, TC-04).
 - Visual appearance of the empty cart, colour finder and Violet shade grid (TC-05 – TC-07).
+- Site search — existing and non-existent shade (TC-13, TC-14).
+- Basket edit/remove — removing the only item and the quantity minimum (TC-17, TC-18).
+- Colour finder entry point (TC-26).
+- Offline checks of the headless setting and visual comparison threshold (TC-24, TC-25).
+- Stubbed storefront, configuration and visual-threshold scenarios tagged `@offline`
+  (TC-27 – TC-34).
 
 See [Test Cases](TEST_CASES.md) for full specifications and
 [Test Strategy §3](TEST_STRATEGY.md#3-scope) for the scope rationale, including what's
@@ -44,8 +50,9 @@ for what it would take to bring each in scope.
 
 - **BDD, black-box, browser-driven** — Gherkin scenarios in
   [`src/test/resources/features/`](../src/test/resources/features), executed via Cucumber
-  on the JUnit Platform against the real production site (no mocks, no staging environment
-  available). See [Test Strategy §4](TEST_STRATEGY.md#4-test-approach).
+  on the JUnit Platform. E2E scenarios run live against the production site (no staging
+  environment available); scenarios tagged `@offline` run against local stub pages and never
+  touch the network. See [Test Strategy §4](TEST_STRATEGY.md#4-test-approach).
 - **Tag-sliced execution** — `@smoke` (fast, desktop-only, gates every push/PR),
   `@regression` (full viewport coverage). See
   [Test Strategy §8](TEST_STRATEGY.md#8-test-selection--tagging-strategy).
@@ -55,6 +62,11 @@ for what it would take to bring each in scope.
   |---|---|---|---|
   | `cucumber-smoke` | Every push to `main`/`feature/**`/`fix/**`, every PR, or manually via `workflow_dispatch` | `@smoke` by default, overridable via the `cucumber_tags` input | Yes — gates the build |
   | `visual-regression` | Same triggers, runs in parallel | `VisualRegressionTest` (JUnit `@Tag("visual")`) | No — `continue-on-error: true` |
+
+`@offline` scenarios carry no `@smoke` tag, so the default CI run does not execute them. They
+run in CI only when requested through the `cucumber_tags` input (e.g. `@offline`), and locally
+with `mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@offline"`. The JUnit unit tests
+(`@Tag("unit")`) are likewise not part of either CI job; they run locally with `mvn test`.
 
 ## 5. Item pass/fail criteria
 

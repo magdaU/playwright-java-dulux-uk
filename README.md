@@ -25,7 +25,7 @@ Also available as a [Python port](https://github.com/magdaU/playwright-python-du
 | Tool | Version | Purpose |
 |---|---|---|
 | Java | 25 | Language |
-| Playwright | 1.57 | Browser automation (Chromium, Firefox, WebKit) |
+| Playwright | 1.57 | Browser automation (Chromium only today; Firefox and WebKit are planned) |
 | JUnit 5 | – | Test runner, launched via `cucumber-junit-platform-engine` |
 | Cucumber | 7.18 | BDD layer — Gherkin feature files → JUnit test items |
 | PicoContainer (`cucumber-picocontainer`) | – | Dependency injection, one context instance per scenario |
@@ -83,6 +83,16 @@ mvn test
 mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@smoke"
 ```
 
+### Offline scenarios
+
+Scenarios tagged `@offline` run against local stub pages instead of the live site (no network needed):
+
+```bash
+mvn test -Dtest=CucumberRunner "-Dcucumber.filter.tags=@offline"
+```
+
+The default CI run only executes `@smoke`, so offline scenarios run in CI only when requested through the `workflow_dispatch` tag input.
+
 ### Docker
 
 ```bash
@@ -116,10 +126,8 @@ mvn allure:serve
 ## 🚀 Future Improvements
 
 * Parallel test execution
-* API testing
 * Accessibility testing
 * Improved test-data management
-* AI-assisted test analysis
 
 ---
 
