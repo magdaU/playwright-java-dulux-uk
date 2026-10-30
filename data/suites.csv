@@ -1,25 +1,25 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"  To preview a colour before making a purchase decision
-  As a Dulux customer
-  I want to open the Visualizer from a selected shade page","4930","Desktop customer opens the Visualizer for a shade","","2026-10-30","passed","2026-10-30","","Open the Dulux Visualizer experience","Desktop customer opens the Visualizer for a shade",""
-"  To start choosing a paint colour
-  As a Dulux customer
-  I want to open the colour finder and see the available colour families","3691","Desktop customer opens the colour finder","","2026-10-30","passed","2026-10-30","","Find a colour","Desktop customer opens the colour finder",""
 "  To stay in control of my data
   As a Dulux customer
-  I want to be able to reject non-essential cookies","3180","Desktop customer rejects all cookies","","2026-10-30","passed","2026-10-30","","Cookie consent","Desktop customer rejects all cookies",""
+  I want to be able to reject non-essential cookies","3351","Desktop customer rejects all cookies","","2026-10-30","passed","2026-10-30","","Cookie consent","Desktop customer rejects all cookies",""
 "  To try a paint colour at home before buying a full tin
   As a Dulux customer
-  I want to add a tester for a chosen shade to my basket","9301","Desktop customer adds a tester from the colour finder","","2026-10-30","passed","2026-10-30","","Purchase a colour tester","Desktop customer adds a tester from the colour finder",""
-"  To start choosing a paint colour
-  As a Dulux customer
-  I want to open the colour finder and see the available colour families","3837","Mobile customer opens the colour finder","","2026-10-30","passed","2026-10-30","","Find a colour","Mobile customer opens the colour finder",""
-"  To control what I am about to buy
-  As a Dulux customer
-  I want to change the quantity of a tester or remove it from my basket","15561","Desktop customer removes the only item from the basket","","2026-10-30","passed","2026-10-30","","Manage the basket","Desktop customer removes the only item from the basket",""
-"  To control what I am about to buy
-  As a Dulux customer
-  I want to change the quantity of a tester or remove it from my basket","2676","Desktop customer continues shopping from an empty basket","","2026-10-30","passed","2026-10-30","","Manage the basket","Desktop customer continues shopping from an empty basket",""
+  I want to add a tester for a chosen shade to my basket","12720","Desktop customer adds a tester from the colour finder","","2026-10-30","passed","2026-10-30","","Purchase a colour tester","Desktop customer adds a tester from the colour finder",""
 "  To find a colour quickly
   As a Dulux customer
-  I want to search the site by shade name","5715","Desktop customer searches for an existing shade","","2026-10-30","passed","2026-10-30","","Search for a shade","Desktop customer searches for an existing shade",""
+  I want to search the site by shade name","3755","Desktop customer searches for an existing shade","","2026-10-30","passed","2026-10-30","","Search for a shade","Desktop customer searches for an existing shade",""
+"  To start choosing a paint colour
+  As a Dulux customer
+  I want to open the colour finder and see the available colour families","4854","Desktop customer opens the colour finder","","2026-10-30","passed","2026-10-30","","Find a colour","Desktop customer opens the colour finder",""
+"  To start choosing a paint colour
+  As a Dulux customer
+  I want to open the colour finder and see the available colour families","4481","Mobile customer opens the colour finder","","2026-10-30","passed","2026-10-30","","Find a colour","Mobile customer opens the colour finder",""
+"  To control what I am about to buy
+  As a Dulux customer
+  I want to change the quantity of a tester or remove it from my basket","20909","Desktop customer removes the only item from the basket","","2026-10-30","passed","2026-10-30","","Manage the basket","Desktop customer removes the only item from the basket",""
+"  To preview a colour before making a purchase decision
+  As a Dulux customer
+  I want to open the Visualizer from a selected shade page","6204","Desktop customer opens the Visualizer for a shade","","2026-10-30","passed","2026-10-30","","Open the Dulux Visualizer experience","Desktop customer opens the Visualizer for a shade",""
+"  To control what I am about to buy
+  As a Dulux customer
+  I want to change the quantity of a tester or remove it from my basket","3088","Desktop customer continues shopping from an empty basket","","2026-10-30","passed","2026-10-30","","Manage the basket","Desktop customer continues shopping from an empty basket",""
